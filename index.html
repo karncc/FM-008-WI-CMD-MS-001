@@ -1,0 +1,623 @@
+<meta charset="utf-8">
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>แผนงาน FM-008</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: one working column — plan details, task cards, sign-off — with the paper form previewed below and a sticky export bar on top. */
+:root{
+  --bg:#f2f6f3; --surface:#ffffff; --sunk:#f7faf8; --ink:#16241d; --muted:#5b6b63; --line:#d3ddd7;
+  --accent:#0b6b4a; --accent-ink:#ffffff; --accent-soft:#e2f3ea; --warn:#b45309; --danger:#b3261e;
+  --paper:#ffffff; --paper-ink:#111111; --paper-head:#ccffcc; --paper-blue:#0070c0;
+  --font:"Sarabun","TH Sarabun New","Leelawadee UI",Tahoma,sans-serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0f1613; --surface:#18221d; --sunk:#131c18; --ink:#e6efe9; --muted:#9fb0a7; --line:#2d3b34;
+  --accent:#4cc38a; --accent-ink:#06140d; --accent-soft:#1c3328; --warn:#f0b35a; --danger:#ff8a80;
+  --paper:#ffffff; --paper-ink:#111111; --paper-head:#ccffcc; --paper-blue:#0070c0; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#0f1613; --surface:#18221d; --sunk:#131c18; --ink:#e6efe9; --muted:#9fb0a7; --line:#2d3b34;
+  --accent:#4cc38a; --accent-ink:#06140d; --accent-soft:#1c3328; --warn:#f0b35a; --danger:#ff8a80;
+  --paper:#ffffff; --paper-ink:#111111; --paper-head:#ccffcc; --paper-blue:#0070c0; color-scheme:dark }
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.5;margin:0}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--surface);border-bottom:1px solid var(--line)}
+.bar-in,.wrap{max-width:1120px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.bar-in{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;padding-block:10px}
+.brand{flex:1 1 220px;min-width:0}
+.brand h1{font-size:19px;line-height:1.25;margin:0;font-weight:700;text-wrap:balance}
+.brand p{margin:0;font-size:13px;color:var(--muted)}
+.actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.wrap{padding-block:20px 48px;display:flex;flex-direction:column;gap:20px}
+section{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px;display:flex;flex-direction:column;gap:14px;min-width:0}
+section>h2{font-size:17px;margin:0;font-weight:700}
+.hint{color:var(--muted);font-size:14px;margin:0}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(12,minmax(0,1fr))}
+.f{display:flex;flex-direction:column;gap:4px;min-width:0;grid-column:span 12}
+.f>span{font-size:13.5px;color:var(--muted);font-weight:500}
+@media (min-width:720px){.s2{grid-column:span 2}.s3{grid-column:span 3}.s4{grid-column:span 4}.s6{grid-column:span 6}.s8{grid-column:span 8}}
+input,textarea,select,button{font:inherit;color:inherit}
+input[type=text],input[type=date],input[type=number],textarea,select{width:100%;min-width:0;background:var(--sunk);border:1px solid var(--line);border-radius:7px;padding:7px 9px}
+textarea{resize:vertical;min-height:40px;line-height:1.4}
+input:focus-visible,textarea:focus-visible,select:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+input.bad{border-color:var(--danger)}
+button{cursor:pointer;border:1px solid var(--line);background:var(--surface);border-radius:7px;padding:7px 12px;font-weight:600}
+button:hover{border-color:var(--accent)}
+button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);padding:9px 18px}
+button.ghost{border-color:transparent;color:var(--muted);font-weight:500}
+button.icon{padding:4px 9px;font-weight:500;font-size:14px}
+button:disabled{opacity:.4;cursor:default}
+.check{display:flex;gap:8px;align-items:center;font-size:15px}
+.check input{width:17px;height:17px;accent-color:var(--accent)}
+/* task cards */
+#tasks{display:flex;flex-direction:column;gap:12px}
+.task{border:1px solid var(--line);border-radius:9px;background:var(--sunk);padding:12px;display:flex;flex-direction:column;gap:10px}
+.task input,.task textarea{background:var(--surface)}
+.task-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.num{width:30px;height:30px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-weight:700;font-variant-numeric:tabular-nums;flex:none}
+.task-head .sum{flex:1;min-width:0;color:var(--muted);font-size:14px;font-variant-numeric:tabular-nums}
+.task-head .tools{display:flex;gap:4px}
+.mh{display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.mh-g{border:1px solid var(--line);border-radius:7px;background:var(--surface);padding:8px 10px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.mh-g b{font-size:13.5px;display:flex;justify-content:space-between;gap:8px}
+.mh-g b output{color:var(--accent);font-variant-numeric:tabular-nums}
+.mh-r{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.mh-r label{display:flex;flex-direction:column;font-size:12px;color:var(--muted);gap:2px}
+.mh-r input{padding:5px 7px;text-align:center}
+.mh-title{font-size:13.5px;font-weight:600;color:var(--muted);margin:2px 0 -2px}
+.row-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+/* percent row */
+#pcts{display:flex;flex-wrap:wrap;gap:8px}
+#pcts label{display:flex;flex-direction:column;gap:2px;font-size:12.5px;color:var(--muted);width:84px}
+#pcts input{text-align:center;padding:5px}
+/* paper preview — a document, kept light in both themes on purpose */
+.paper-scroll{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--paper)}
+.paper{color:var(--paper-ink);background:var(--paper);padding:18px 20px;min-width:1280px;font-size:12.5px;line-height:1.3}
+.paper h3{margin:0;text-align:center;font-size:20px;font-weight:700}
+.paper h3 span{color:var(--paper-blue)}
+.paper h4{margin:2px 0 8px;text-align:center;font-size:15px;font-weight:700}
+.paper h4 span{color:#0000ff}
+.paper .right{text-align:right;font-size:12px;margin-bottom:3px;min-height:16px}
+.paper table{border-collapse:collapse;width:100%;table-layout:fixed}
+.paper th,.paper td{border:1px solid var(--paper-ink);padding:2px 4px;height:22px;overflow:hidden;text-align:center;font-variant-numeric:tabular-nums;word-break:break-word}
+.paper thead th,.paper tr.tot td{background:var(--paper-head);font-weight:700}
+.paper thead tr:first-child th{border-top-width:2px}
+.paper tr.tot td{border-top:3px double var(--paper-ink);border-bottom:3px double var(--paper-ink)}
+.paper tbody td{border-top-style:dotted;border-bottom-style:dotted}
+.paper td.l{text-align:left}
+.paper td.g{padding:0;position:relative;overflow:visible}
+.paper td.g i{position:absolute;top:50%;height:18px;margin-top:-9px;min-width:6px;cursor:grab;touch-action:none}
+.paper td.g i::before{content:"";position:absolute;left:0;right:0;top:6.5px;height:5px;background:var(--paper-ink);border-radius:1px}
+.paper td.g i:hover::before,.paper td.g i.drag::before{background:var(--paper-blue)}
+.paper td.g i.edge{cursor:ew-resize}
+.paper td.g i.drag{cursor:grabbing;z-index:2}
+.paper td.g i.drag::after{content:attr(data-tip);position:absolute;bottom:17px;left:0;white-space:nowrap;background:var(--paper-ink);color:var(--paper);padding:1px 7px;border-radius:4px;font-size:11.5px;font-style:normal;font-weight:600}
+.paper .signs{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:22px;text-align:center}
+.paper .signs div{display:flex;flex-direction:column;gap:2px}
+.paper .foot{display:grid;grid-template-columns:1fr 1.4fr 1fr;margin-top:16px;border:1px solid var(--paper-ink);font-weight:700;text-align:center}
+.paper .foot span{padding:3px}.paper .foot span+span{border-left:1px solid var(--paper-ink)}
+#msg{font-size:14px;min-height:20px;margin:0}
+#msg.err{color:var(--danger)} #msg.ok{color:var(--accent)}
+#warn{color:var(--warn);font-size:14px;margin:0;padding-left:18px}
+#warn:empty{display:none}
+.confirm{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:14px}
+@media (prefers-reduced-motion:no-preference){button{transition:border-color .15s}}
+</style>
+
+<div class="bar"><div class="bar-in">
+  <div class="brand">
+    <h1>แบบฟอร์มแผนงาน FM-008/WI-CMD-MS-001</h1>
+    <p>กรอกข้อมูล แล้วส่งออกเป็น Excel รูปแบบเดียวกับต้นฉบับ (แก้ไขครั้งที่ 03)</p>
+  </div>
+  <div class="actions">
+    <span class="confirm" id="resetConfirm" hidden>ล้างข้อมูลทั้งหมด? <button type="button" id="resetYes">ล้าง</button><button type="button" class="ghost" id="resetNo">ยกเลิก</button></span>
+    <button type="button" class="ghost" id="btnReset">เริ่มแผนใหม่</button>
+    <button type="button" class="ghost" id="btnSample">โหลดตัวอย่าง</button>
+    <button type="button" class="primary" id="btnExport">ส่งออก Excel (.xlsx)</button>
+  </div>
+</div></div>
+
+<div class="wrap">
+  <p id="msg" role="status"></p>
+
+  <section>
+    <h2>1. ข้อมูลแผนงาน</h2>
+    <div class="grid">
+      <label class="f s8"><span>ชื่องาน (ต่อท้ายคำว่า "แผนงาน")</span><input type="text" id="title" placeholder="เช่น งานออกแบบ..."></label>
+      <label class="f s2"><span>งานตามแผนลำดับที่</span><input type="text" id="planNo" inputmode="numeric"></label>
+      <label class="f s2"><span>PM-Order</span><input type="text" id="pmOrder" placeholder="เว้นว่างได้"></label>
+      <label class="f s3"><span>แผนก</span><input type="text" id="dept"></label>
+      <label class="f s3"><span>กอง</span><input type="text" id="division"></label>
+      <label class="f s6"><span>ฝ่าย</span><input type="text" id="bureau"></label>
+    </div>
+  </section>
+
+  <section>
+    <h2>2. รายการงาน</h2>
+    <p class="hint">Man-Hour = คน × วัน × ชั่วโมงต่อวัน ระบบรวมให้อัตโนมัติ และวาดแถบ Gantt จากวันเริ่ม–วันเสร็จ ชื่องานขึ้นบรรทัดใหม่ได้ (บรรทัดถัดไปจะอยู่ในแถวถัดไปของฟอร์ม)</p>
+    <label class="check"><input type="checkbox" id="dept2On"> มีแผนกอื่นร่วมงาน (เพิ่มตาราง Man-Hour ชุดที่ 2)</label>
+    <label class="f s4" id="dept2Wrap" hidden><span>ชื่อแผนกที่ร่วมงาน</span><input type="text" id="dept2"></label>
+    <div id="tasks"></div>
+    <div class="row-actions"><button type="button" id="btnAdd">+ เพิ่มรายการ</button></div>
+    <ul id="warn"></ul>
+  </section>
+
+  <section>
+    <h2>3. ช่วงเวลาและเปอร์เซ็นต์ของแผนงาน</h2>
+    <div class="grid">
+      <label class="f s4"><span>หัวตารางช่วงเวลา</span>
+        <select id="scale"><option value="auto">อัตโนมัติ</option><option value="month">รายเดือน</option><option value="week">รายสัปดาห์</option></select></label>
+    </div>
+    <label class="check"><input type="checkbox" id="pctManual"> กำหนดเปอร์เซ็นต์สะสมเอง (ไม่ติ๊ก = คำนวณจาก Man-Hour ตามเวลา)</label>
+    <div id="pcts"></div>
+  </section>
+
+  <section>
+    <h2>4. หมายเหตุและผู้ลงนาม</h2>
+    <div class="grid">
+      <label class="f"><span>ช่องหมายเหตุ (บรรทัดละ 1 แถว เช่น ผู้ประสานงาน ชื่อ หน่วยงาน เบอร์โทร)</span><textarea id="notes" rows="4"></textarea></label>
+    </div>
+    <div class="grid">
+      <label class="f s4"><span>ผู้จัดทำ</span><input type="text" id="s0name"></label>
+      <label class="f s4"><span>ตำแหน่ง</span><input type="text" id="s0pos"></label>
+      <label class="f s4"><span>วันที่ลงนาม</span><input type="date" id="s0date"></label>
+      <label class="f s4"><span>ผู้เห็นชอบ (หัวหน้าแผนกหรือเทียบเท่า)</span><input type="text" id="s1name"></label>
+      <label class="f s4"><span>ตำแหน่ง</span><input type="text" id="s1pos"></label>
+      <label class="f s4"><span>วันที่ลงนาม</span><input type="date" id="s1date"></label>
+      <label class="f s4"><span>ผู้อนุมัติ (หัวหน้ากองหรือเทียบเท่า)</span><input type="text" id="s2name"></label>
+      <label class="f s4"><span>ตำแหน่ง</span><input type="text" id="s2pos"></label>
+      <label class="f s4"><span>วันที่ลงนาม</span><input type="date" id="s2date"></label>
+    </div>
+    <p class="hint">ไม่ใส่วันที่ = เว้นเส้นประไว้เขียนเอง ลายเซ็นให้ลงในไฟล์ Excel หรือหลังพิมพ์</p>
+  </section>
+
+  <section>
+    <h2>ตัวอย่างแบบฟอร์ม</h2>
+    <p class="hint">ลากแถบระยะเวลาเพื่อเลื่อนทั้งช่วง หรือลากที่ปลายแถบเพื่อปรับวันเริ่ม/วันเสร็จ วันที่ในรายการงานจะเปลี่ยนตาม</p>
+    <div class="paper-scroll"><div class="paper" id="paper"></div></div>
+    <div class="row-actions"><button type="button" class="primary" id="btnExport2">ส่งออก Excel (.xlsx)</button></div>
+  </section>
+</div>
+
+<script>
+var TPL={"grid":[[-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],[86,86,86,86,86,86,86,86,86,86,86,86,86,86,86,86,86,86,86,86,86,86,86,86,86,86,86,86,86,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],[87,87,87,87,87,87,87,87,87,87,87,87,87,87,87,87,87,87,87,87,87,87,87,87,87,87,87,87,87,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],[-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],[88,89,89,90,90,91,92,92,92,92,82,83,83,83,83,83,83,83,83,83,83,83,83,83,83,83,89,89,93,-1,-1,6,7,8,8,8,8,8,8,8,6,6,6,6,-1,6,7,8,8,8,8,8,8,8,6,6,6,6],[88,89,89,90,90,91,94,94,94,95,84,85,85,85,85,85,85,85,85,85,85,85,85,85,85,85,89,89,93,-1,-1,9,75,75,75,75,76,76,76,76,80,80,80,80,-1,9,75,75,75,75,76,76,76,76,80,80,80,80],[88,89,89,90,90,91,13,13,13,95,81,81,81,81,81,81,81,81,81,81,81,81,81,81,81,81,89,89,93,-1,-1,14,10,10,10,10,11,11,11,11,12,12,12,12,-1,14,10,10,10,10,11,11,11,11,12,12,12,12],[15,102,103,16,61,17,17,17,17,18,19,20,20,21,19,20,20,21,19,20,20,21,19,20,20,21,22,23,24,-1,-1,25,26,26,26,27,28,28,28,29,28,28,28,29,-1,25,26,26,26,27,28,28,28,27,30,30,30,31],[15,99,100,32,32,17,17,17,17,18,33,34,34,21,33,34,34,21,33,34,34,21,33,34,34,21,22,23,35,-1,-1,25,26,26,26,27,26,26,26,29,28,28,28,29,-1,25,26,26,26,27,26,26,26,27,26,26,26,27],[36,99,100,32,37,17,17,17,17,18,33,34,34,21,33,34,34,21,33,34,34,21,33,34,34,21,22,23,35,-1,-1,25,26,26,26,27,26,26,26,29,28,28,28,29,-1,25,26,26,26,27,26,26,26,27,26,26,26,27],[63,96,97,64,64,64,64,64,64,65,33,34,34,21,33,34,34,21,33,34,34,21,33,34,34,21,22,23,39,-1,-1,25,26,26,26,27,28,28,28,29,30,30,30,31,-1,25,26,26,26,27,28,28,28,27,30,30,30,31],[66,98,98,67,67,67,67,67,67,68,33,34,34,21,33,34,34,21,33,34,34,21,33,34,34,21,40,23,41,-1,-1,25,26,26,26,27,28,28,28,29,30,30,30,31,-1,25,26,26,26,27,28,28,28,29,30,30,30,31],[66,101,101,67,67,67,67,67,67,68,33,34,34,21,33,34,34,21,33,34,34,21,33,34,34,21,40,23,42,-1,-1,25,26,26,26,27,28,28,28,29,30,30,30,31,-1,25,26,26,26,27,28,28,28,29,30,30,30,31],[66,101,101,67,67,67,67,67,67,68,33,34,34,21,33,34,34,21,33,34,34,21,33,34,34,21,40,23,35,-1,-1,25,26,26,26,27,28,28,28,29,30,30,30,31,-1,25,26,26,26,27,28,28,28,29,30,30,30,31],[66,101,101,67,67,67,67,67,67,68,33,34,34,21,33,34,34,21,33,34,34,21,33,34,34,21,40,23,35,-1,-1,25,26,26,26,27,28,28,28,29,30,30,30,31,-1,25,26,26,26,27,28,28,28,29,30,30,30,31],[66,101,101,67,67,67,67,67,67,68,33,34,34,21,33,34,34,21,33,34,34,21,33,34,34,21,22,23,39,-1,-1,25,26,26,26,27,28,28,28,29,30,30,30,31,-1,25,26,26,26,27,28,28,28,29,30,30,30,31],[66,101,101,67,67,67,67,67,67,68,33,34,34,21,33,34,34,21,33,34,34,21,33,34,34,21,22,23,42,-1,-1,25,26,26,26,27,28,28,28,29,30,30,30,31,-1,25,26,26,26,27,28,28,28,29,30,30,30,31],[66,101,101,67,67,67,67,67,67,68,33,34,34,21,33,34,34,21,33,34,34,21,33,34,34,21,22,38,43,-1,-1,25,26,26,26,27,28,28,28,29,30,30,30,31,-1,25,26,26,26,27,28,28,28,29,30,30,30,31],[66,101,101,67,67,67,67,67,67,68,33,34,34,21,33,34,34,21,33,34,34,21,33,34,34,21,22,38,43,-1,-1,44,26,26,26,27,28,28,28,29,30,30,30,31,-1,44,26,26,26,27,28,28,28,29,30,30,30,31],[66,101,101,67,67,67,67,67,67,68,33,34,34,21,33,34,34,21,33,34,34,21,33,34,34,21,22,38,43,-1,-1,14,75,75,75,75,76,76,76,76,77,78,78,79,-1,14,75,75,75,75,76,76,76,76,77,78,78,79],[69,106,106,71,71,71,71,71,71,70,33,34,34,21,33,34,34,21,33,34,34,21,33,34,34,21,22,38,43,-1,-1,14,74,74,74,74,74,74,74,74,74,74,74,74,-1,14,74,74,74,74,74,74,74,74,74,74,74,74],[45,46,47,48,48,49,49,49,49,49,108,109,109,110,108,109,109,110,108,109,109,110,108,109,109,110,50,46,51,-1,-1,-1,-1,-1,-1,52,-1,-1,-1,52,-1,-1,-1,-1,-1,-1,-1,-1,-1,52,-1,-1,-1,52,-1,-1,-1,-1],[-1,-1,52,52,52,52,62,62,62,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,52,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],[-1,-1,53,54,-1,55,-1,-1,53,-1,54,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,54,-1,-1,-1,104,104,54,1,1,1,1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],[-1,-1,56,55,4,55,-1,55,56,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,104,104,-1,1,1,1,1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],[-1,-1,56,55,-1,55,-1,55,56,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,107,107,-1,1,1,-1,1,1,1,1,1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],[-1,-1,53,55,55,55,57,-1,56,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,55,104,104,-1,1,1,58,58,58,58,58,58,1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],[-1,59,59,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],[-1,-1,60,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],[-1,-1,60,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],[-1,-1,60,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],[-1,-1,60,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],[-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],[105,105,105,105,105,72,73,73,73,73,73,73,73,73,73,73,73,73,73,73,73,73,73,73,73,73,105,105,105,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1]],"rows":[[20.1,-1],[44.45,3],[27.0,3],[27.0,4],[27.0,5],[27.0,5],[27.0,3],[27.0,4],[27.0,4],[27.0,4],[27.0,4],[27.0,4],[27.0,4],[27.0,4],[27.0,4],[27.0,4],[27.0,4],[27.0,4],[27.0,4],[27.0,4],[27.0,4],[27.0,4],[30.0,4],[30.0,4],[30.0,4],[30.0,4],[30.0,4],[30.0,-1],[30.0,-1],[30.0,-1],[30.0,-1],[30.0,-1],[20.1,-1],[23.85,-1]],"monthXf":111,"styles":"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<styleSheet xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\" mc:Ignorable=\"x14ac x16r2 xr\" xmlns:x14ac=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/ac\" xmlns:x16r2=\"http://schemas.microsoft.com/office/spreadsheetml/2015/02/main\" xmlns:xr=\"http://schemas.microsoft.com/office/spreadsheetml/2014/revision\"><numFmts count=\"3\"><numFmt numFmtId=\"187\" formatCode=\"[$-41E]d\\-mmm\\-yy\"/><numFmt numFmtId=\"188\" formatCode=\"[$-107041E]d\\ mmm\\ yy;@\"/><numFmt numFmtId=\"189\" formatCode=\"[$-107041E]mmm\\ yy;@\"/><\/numFmts><fonts count=\"42\" x14ac:knownFonts=\"1\"><font><sz val=\"14\"/><name val=\"Cordia New\"/><charset val=\"222\"/><\/font><font><sz val=\"11\"/><color rgb=\"FF000000\"/><name val=\"Tahoma\"/><family val=\"2\"/><\/font><font><sz val=\"11\"/><color rgb=\"FFFFFFFF\"/><name val=\"Tahoma\"/><family val=\"2\"/><\/font><font><b/><sz val=\"11\"/><color rgb=\"FFFF9900\"/><name val=\"Tahoma\"/><family val=\"2\"/><\/font><font><i/><sz val=\"11\"/><color rgb=\"FF808080\"/><name val=\"Tahoma\"/><family val=\"2\"/><\/font><font><sz val=\"11\"/><color rgb=\"FFFF0000\"/><name val=\"Tahoma\"/><family val=\"2\"/><\/font><font><b/><sz val=\"18\"/><color rgb=\"FF003366\"/><name val=\"Tahoma\"/><family val=\"2\"/><\/font><font><sz val=\"11\"/><color rgb=\"FF008000\"/><name val=\"Tahoma\"/><family val=\"2\"/><\/font><font><sz val=\"11\"/><color rgb=\"FF993300\"/><name val=\"Tahoma\"/><family val=\"2\"/><\/font><font><sz val=\"11\"/><color rgb=\"FF333399\"/><name val=\"Tahoma\"/><family val=\"2\"/><\/font><font><b/><sz val=\"11\"/><color rgb=\"FF000000\"/><name val=\"Tahoma\"/><family val=\"2\"/><\/font><font><sz val=\"14\"/><name val=\"Cordia New\"/><family val=\"2\"/><\/font><font><b/><sz val=\"15\"/><color rgb=\"FF003366\"/><name val=\"Tahoma\"/><family val=\"2\"/><\/font><font><b/><sz val=\"13\"/><color rgb=\"FF003366\"/><name val=\"Tahoma\"/><family val=\"2\"/><\/font><font><b/><sz val=\"11\"/><color rgb=\"FF003366\"/><name val=\"Tahoma\"/><family val=\"2\"/><\/font><font><b/><sz val=\"11\"/><color rgb=\"FFFFFFFF\"/><name val=\"Tahoma\"/><family val=\"2\"/><\/font><font><sz val=\"11\"/><color rgb=\"FFFF9900\"/><name val=\"Tahoma\"/><family val=\"2\"/><\/font><font><sz val=\"11\"/><color rgb=\"FF800080\"/><name val=\"Tahoma\"/><family val=\"2\"/><\/font><font><b/><sz val=\"11\"/><color rgb=\"FF333333\"/><name val=\"Tahoma\"/><family val=\"2\"/><\/font><font><sz val=\"14\"/><name val=\"Cordia New\"/><family val=\"2\"/><\/font><font><sz val=\"11\"/><color indexed=\"8\"/><name val=\"Cordia New\"/><family val=\"2\"/><\/font><font><sz val=\"16\"/><name val=\"TH Sarabun New\"/><family val=\"2\"/><\/font><font><sz val=\"14\"/><name val=\"TH Sarabun New\"/><family val=\"2\"/><\/font><font><b/><sz val=\"28\"/><name val=\"TH Sarabun New\"/><family val=\"2\"/><\/font><font><b/><sz val=\"28\"/><color rgb=\"FF0070C0\"/><name val=\"TH Sarabun New\"/><family val=\"2\"/><\/font><font><b/><sz val=\"16\"/><name val=\"TH Sarabun New\"/><family val=\"2\"/><\/font><font><b/><sz val=\"22\"/><name val=\"TH Sarabun New\"/><family val=\"2\"/><\/font><font><b/><sz val=\"22\"/><color rgb=\"FF0000FF\"/><name val=\"TH Sarabun New\"/><family val=\"2\"/><\/font><font><b/><sz val=\"20\"/><name val=\"TH Sarabun New\"/><family val=\"2\"/><\/font><font><b/><sz val=\"18\"/><name val=\"TH Sarabun New\"/><family val=\"2\"/><\/font><font><b/><vertAlign val=\"superscript\"/><sz val=\"20\"/><name val=\"TH Sarabun New\"/><family val=\"2\"/><\/font><font><b/><sz val=\"14\"/><name val=\"TH Sarabun New\"/><family val=\"2\"/><\/font><font><b/><sz val=\"14\"/><color indexed=\"8\"/><name val=\"TH Sarabun New\"/><family val=\"2\"/><\/font><font><sz val=\"14\"/><color indexed=\"8\"/><name val=\"TH Sarabun New\"/><family val=\"2\"/><\/font><font><sz val=\"14\"/><color theme=\"1\"/><name val=\"TH Sarabun New\"/><family val=\"2\"/><\/font><font><u/><sz val=\"16\"/><name val=\"TH Sarabun New\"/><family val=\"2\"/><\/font><font><b/><sz val=\"14\"/><color indexed=\"10\"/><name val=\"TH Sarabun New\"/><family val=\"2\"/><\/font><font><sz val=\"18\"/><name val=\"TH Sarabun New\"/><family val=\"2\"/><\/font><font><u/><sz val=\"14\"/><name val=\"TH Sarabun New\"/><family val=\"2\"/><\/font><font><b/><vertAlign val=\"superscript\"/><sz val=\"18\"/><name val=\"TH Sarabun New\"/><family val=\"2\"/><\/font><font><sz val=\"20\"/><name val=\"TH Sarabun New\"/><family val=\"2\"/><\/font><font><u/><sz val=\"14\"/><color theme=\"0\" tint=\"-4.9989318521683403E-2\"/><name val=\"TH Sarabun New\"/><family val=\"2\"/><\/font><\/fonts><fills count=\"29\"><fill><patternFill patternType=\"none\"/><\/fill><fill><patternFill patternType=\"gray125\"/><\/fill><fill><patternFill patternType=\"solid\"><fgColor rgb=\"FFCCCCFF\"/><bgColor rgb=\"FFC0C0C0\"/><\/patternFill><\/fill><fill><patternFill patternType=\"solid\"><fgColor rgb=\"FFFF99CC\"/><bgColor rgb=\"FFFF8080\"/><\/patternFill><\/fill><fill><patternFill patternType=\"solid\"><fgColor rgb=\"FFCCFFCC\"/><bgColor rgb=\"FFCCFFFF\"/><\/patternFill><\/fill><fill><patternFill patternType=\"solid\"><fgColor rgb=\"FFCC99FF\"/><bgColor rgb=\"FF9999FF\"/><\/patternFill><\/fill><fill><patternFill patternType=\"solid\"><fgColor rgb=\"FFCCFFFF\"/><bgColor rgb=\"FFCCFFFF\"/><\/patternFill><\/fill><fill><patternFill patternType=\"solid\"><fgColor rgb=\"FFFFCC99\"/><bgColor rgb=\"FFC0C0C0\"/><\/patternFill><\/fill><fill><patternFill patternType=\"solid\"><fgColor rgb=\"FF99CCFF\"/><bgColor rgb=\"FFCCCCFF\"/><\/patternFill><\/fill><fill><patternFill patternType=\"solid\"><fgColor rgb=\"FFFF8080\"/><bgColor rgb=\"FFFF99CC\"/><\/patternFill><\/fill><fill><patternFill patternType=\"solid\"><fgColor rgb=\"FF00FF00\"/><bgColor rgb=\"FF33CCCC\"/><\/patternFill><\/fill><fill><patternFill patternType=\"solid\"><fgColor rgb=\"FFFFCC00\"/><bgColor rgb=\"FFFFFF00\"/><\/patternFill><\/fill><fill><patternFill patternType=\"solid\"><fgColor rgb=\"FF0066CC\"/><bgColor rgb=\"FF008080\"/><\/patternFill><\/fill><fill><patternFill patternType=\"solid\"><fgColor rgb=\"FF800080\"/><bgColor rgb=\"FF800080\"/><\/patternFill><\/fill><fill><patternFill patternType=\"solid\"><fgColor rgb=\"FF33CCCC\"/><bgColor rgb=\"FF00CCFF\"/><\/patternFill><\/fill><fill><patternFill patternType=\"solid\"><fgColor rgb=\"FFFF9900\"/><bgColor rgb=\"FFFFCC00\"/><\/patternFill><\/fill><fill><patternFill patternType=\"solid\"><fgColor rgb=\"FFC0C0C0\"/><bgColor rgb=\"FFCCCCFF\"/><\/patternFill><\/fill><fill><patternFill patternType=\"solid\"><fgColor rgb=\"FFFFFF99\"/><bgColor rgb=\"FFFFFFCC\"/><\/patternFill><\/fill><fill><patternFill patternType=\"solid\"><fgColor rgb=\"FF333399\"/><bgColor rgb=\"FF003366\"/><\/patternFill><\/fill><fill><patternFill patternType=\"solid\"><fgColor rgb=\"FFFF0000\"/><bgColor rgb=\"FF993300\"/><\/patternFill><\/fill><fill><patternFill patternType=\"solid\"><fgColor rgb=\"FF339966\"/><bgColor rgb=\"FF008080\"/><\/patternFill><\/fill><fill><patternFill patternType=\"solid\"><fgColor rgb=\"FFFF6600\"/><bgColor rgb=\"FFFF9900\"/><\/patternFill><\/fill><fill><patternFill patternType=\"solid\"><fgColor rgb=\"FFFFFFCC\"/><bgColor rgb=\"FFFFFFFF\"/><\/patternFill><\/fill><fill><patternFill patternType=\"solid\"><fgColor rgb=\"FF969696\"/><bgColor rgb=\"FF808080\"/><\/patternFill><\/fill><fill><patternFill patternType=\"solid\"><fgColor indexed=\"42\"/><bgColor indexed=\"27\"/><\/patternFill><\/fill><fill><patternFill patternType=\"solid\"><fgColor indexed=\"43\"/><bgColor indexed=\"26\"/><\/patternFill><\/fill><fill><patternFill patternType=\"solid\"><fgColor indexed=\"45\"/><bgColor indexed=\"29\"/><\/patternFill><\/fill><fill><patternFill patternType=\"solid\"><fgColor indexed=\"27\"/><bgColor indexed=\"41\"/><\/patternFill><\/fill><fill><patternFill patternType=\"solid\"><fgColor theme=\"0\"/><bgColor indexed=\"64\"/><\/patternFill><\/fill><\/fills><borders count=\"56\"><border><left/><right/><top/><bottom/><diagonal/><\/border><border><left style=\"thin\"><color rgb=\"FF808080\"/><\/left><right style=\"thin\"><color rgb=\"FF808080\"/><\/right><top style=\"thin\"><color rgb=\"FF808080\"/><\/top><bottom style=\"thin\"><color rgb=\"FF808080\"/><\/bottom><diagonal/><\/border><border><left/><right/><top style=\"thin\"><color rgb=\"FF333399\"/><\/top><bottom style=\"double\"><color rgb=\"FF333399\"/><\/bottom><diagonal/><\/border><border><left style=\"thin\"><color rgb=\"FFC0C0C0\"/><\/left><right style=\"thin\"><color rgb=\"FFC0C0C0\"/><\/right><top style=\"thin\"><color rgb=\"FFC0C0C0\"/><\/top><bottom style=\"thin\"><color rgb=\"FFC0C0C0\"/><\/bottom><diagonal/><\/border><border><left/><right/><top/><bottom style=\"thick\"><color rgb=\"FF333399\"/><\/bottom><diagonal/><\/border><border><left/><right/><top/><bottom style=\"thick\"><color rgb=\"FFC0C0C0\"/><\/bottom><diagonal/><\/border><border><left/><right/><top/><bottom style=\"medium\"><color rgb=\"FF0066CC\"/><\/bottom><diagonal/><\/border><border><left style=\"double\"><color rgb=\"FF333333\"/><\/left><right style=\"double\"><color rgb=\"FF333333\"/><\/right><top style=\"double\"><color rgb=\"FF333333\"/><\/top><bottom style=\"double\"><color rgb=\"FF333333\"/><\/bottom><diagonal/><\/border><border><left/><right/><top/><bottom style=\"double\"><color rgb=\"FFFF9900\"/><\/bottom><diagonal/><\/border><border><left style=\"thin\"><color rgb=\"FF333333\"/><\/left><right style=\"thin\"><color rgb=\"FF333333\"/><\/right><top style=\"thin\"><color rgb=\"FF333333\"/><\/top><bottom style=\"thin\"><color rgb=\"FF333333\"/><\/bottom><diagonal/><\/border><border><left style=\"double\"><color auto=\"1\"/><\/left><right/><top style=\"double\"><color auto=\"1\"/><\/top><bottom style=\"double\"><color auto=\"1\"/><\/bottom><diagonal/><\/border><border><left style=\"medium\"><color auto=\"1\"/><\/left><right style=\"medium\"><color auto=\"1\"/><\/right><top style=\"double\"><color auto=\"1\"/><\/top><bottom style=\"double\"><color auto=\"1\"/><\/bottom><diagonal/><\/border><border><left style=\"medium\"><color auto=\"1\"/><\/left><right style=\"medium\"><color auto=\"1\"/><\/right><top style=\"double\"><color auto=\"1\"/><\/top><bottom style=\"medium\"><color auto=\"1\"/><\/bottom><diagonal/><\/border><border><left style=\"medium\"><color auto=\"1\"/><\/left><right style=\"double\"><color auto=\"1\"/><\/right><top style=\"double\"><color auto=\"1\"/><\/top><bottom style=\"double\"><color auto=\"1\"/><\/bottom><diagonal/><\/border><border><left style=\"medium\"><color auto=\"1\"/><\/left><right style=\"medium\"><color auto=\"1\"/><\/right><top style=\"medium\"><color auto=\"1\"/><\/top><bottom style=\"medium\"><color auto=\"1\"/><\/bottom><diagonal/><\/border><border><left style=\"medium\"><color auto=\"1\"/><\/left><right style=\"medium\"><color auto=\"1\"/><\/right><top style=\"medium\"><color auto=\"1\"/><\/top><bottom style=\"double\"><color auto=\"1\"/><\/bottom><diagonal/><\/border><border><left/><right style=\"medium\"><color auto=\"1\"/><\/right><top style=\"medium\"><color auto=\"1\"/><\/top><bottom style=\"double\"><color auto=\"1\"/><\/bottom><diagonal/><\/border><border><left style=\"medium\"><color auto=\"1\"/><\/left><right style=\"thin\"><color auto=\"1\"/><\/right><top style=\"double\"><color auto=\"1\"/><\/top><bottom/><diagonal/><\/border><border><left style=\"thin\"><color auto=\"1\"/><\/left><right style=\"thin\"><color auto=\"1\"/><\/right><top style=\"double\"><color auto=\"1\"/><\/top><bottom/><diagonal/><\/border><border><left style=\"medium\"><color auto=\"1\"/><\/left><right style=\"medium\"><color auto=\"1\"/><\/right><top/><bottom/><diagonal/><\/border><border><left style=\"medium\"><color auto=\"1\"/><\/left><right/><top/><bottom/><diagonal/><\/border><border><left style=\"medium\"><color auto=\"1\"/><\/left><right style=\"thin\"><color auto=\"1\"/><\/right><top/><bottom/><diagonal/><\/border><border><left style=\"thin\"><color auto=\"1\"/><\/left><right style=\"thin\"><color auto=\"1\"/><\/right><top/><bottom/><diagonal/><\/border><border><left style=\"medium\"><color auto=\"1\"/><\/left><right style=\"double\"><color auto=\"1\"/><\/right><top/><bottom/><diagonal/><\/border><border><left style=\"medium\"><color auto=\"1\"/><\/left><right/><top style=\"double\"><color auto=\"1\"/><\/top><bottom style=\"double\"><color auto=\"1\"/><\/bottom><diagonal/><\/border><border><left/><right style=\"medium\"><color auto=\"1\"/><\/right><top style=\"double\"><color auto=\"1\"/><\/top><bottom style=\"double\"><color auto=\"1\"/><\/bottom><diagonal/><\/border><border><left/><right/><top style=\"double\"><color auto=\"1\"/><\/top><bottom style=\"double\"><color auto=\"1\"/><\/bottom><diagonal/><\/border><border><left style=\"thin\"><color auto=\"1\"/><\/left><right style=\"thin\"><color auto=\"1\"/><\/right><top style=\"thin\"><color auto=\"1\"/><\/top><bottom style=\"thin\"><color auto=\"1\"/><\/bottom><diagonal/><\/border><border><left style=\"double\"><color indexed=\"8\"/><\/left><right/><top style=\"hair\"><color indexed=\"8\"/><\/top><bottom style=\"hair\"><color indexed=\"8\"/><\/bottom><diagonal/><\/border><border><left style=\"medium\"><color indexed=\"8\"/><\/left><right/><top style=\"double\"><color indexed=\"8\"/><\/top><bottom style=\"hair\"><color indexed=\"8\"/><\/bottom><diagonal/><\/border><border><left/><right style=\"medium\"><color indexed=\"8\"/><\/right><top style=\"double\"><color indexed=\"8\"/><\/top><bottom style=\"hair\"><color indexed=\"8\"/><\/bottom><diagonal/><\/border><border><left style=\"medium\"><color indexed=\"8\"/><\/left><right/><top style=\"hair\"><color indexed=\"8\"/><\/top><bottom style=\"hair\"><color indexed=\"8\"/><\/bottom><diagonal/><\/border><border><left/><right style=\"medium\"><color indexed=\"8\"/><\/right><top style=\"hair\"><color indexed=\"8\"/><\/top><bottom style=\"hair\"><color indexed=\"8\"/><\/bottom><diagonal/><\/border><border><left style=\"double\"><color indexed=\"8\"/><\/left><right/><top style=\"hair\"><color indexed=\"8\"/><\/top><bottom/><diagonal/><\/border><border><left style=\"thin\"><color indexed=\"64\"/><\/left><right/><top style=\"thin\"><color indexed=\"64\"/><\/top><bottom style=\"thin\"><color indexed=\"64\"/><\/bottom><diagonal/><\/border><border><left/><right/><top style=\"thin\"><color indexed=\"64\"/><\/top><bottom style=\"thin\"><color indexed=\"64\"/><\/bottom><diagonal/><\/border><border><left/><right style=\"thin\"><color indexed=\"64\"/><\/right><top style=\"thin\"><color indexed=\"64\"/><\/top><bottom style=\"thin\"><color indexed=\"64\"/><\/bottom><diagonal/><\/border><border><left style=\"medium\"><color auto=\"1\"/><\/left><right/><top style=\"double\"><color auto=\"1\"/><\/top><bottom/><diagonal/><\/border><border><left/><right/><top style=\"double\"><color auto=\"1\"/><\/top><bottom/><diagonal/><\/border><border><left style=\"medium\"><color auto=\"1\"/><\/left><right/><top/><bottom style=\"medium\"><color auto=\"1\"/><\/bottom><diagonal/><\/border><border><left/><right/><top/><bottom style=\"medium\"><color auto=\"1\"/><\/bottom><diagonal/><\/border><border><left style=\"medium\"><color indexed=\"8\"/><\/left><right style=\"medium\"><color indexed=\"8\"/><\/right><top style=\"hair\"><color indexed=\"64\"/><\/top><bottom style=\"hair\"><color indexed=\"64\"/><\/bottom><diagonal/><\/border><border><left style=\"medium\"><color indexed=\"64\"/><\/left><right style=\"medium\"><color indexed=\"8\"/><\/right><top style=\"hair\"><color indexed=\"64\"/><\/top><bottom style=\"hair\"><color indexed=\"8\"/><\/bottom><diagonal/><\/border><border><left style=\"thin\"><color indexed=\"8\"/><\/left><right/><top style=\"thin\"><color indexed=\"8\"/><\/top><bottom style=\"hair\"><color indexed=\"8\"/><\/bottom><diagonal/><\/border><border><left style=\"medium\"><color indexed=\"8\"/><\/left><right style=\"medium\"><color indexed=\"8\"/><\/right><top style=\"double\"><color auto=\"1\"/><\/top><bottom style=\"hair\"><color indexed=\"64\"/><\/bottom><diagonal/><\/border><border><left style=\"double\"><color indexed=\"8\"/><\/left><right/><top style=\"hair\"><color indexed=\"8\"/><\/top><bottom style=\"hair\"><color auto=\"1\"/><\/bottom><diagonal/><\/border><border><left style=\"medium\"><color indexed=\"8\"/><\/left><right/><top style=\"hair\"><color indexed=\"8\"/><\/top><bottom style=\"hair\"><color auto=\"1\"/><\/bottom><diagonal/><\/border><border><left/><right style=\"medium\"><color indexed=\"8\"/><\/right><top style=\"hair\"><color indexed=\"8\"/><\/top><bottom style=\"hair\"><color auto=\"1\"/><\/bottom><diagonal/><\/border><border><left style=\"medium\"><color auto=\"1\"/><\/left><right/><top/><bottom style=\"hair\"><color auto=\"1\"/><\/bottom><diagonal/><\/border><border><left style=\"medium\"><color auto=\"1\"/><\/left><right style=\"medium\"><color auto=\"1\"/><\/right><top/><bottom style=\"hair\"><color auto=\"1\"/><\/bottom><diagonal/><\/border><border><left style=\"double\"><color auto=\"1\"/><\/left><right/><top style=\"hair\"><color auto=\"1\"/><\/top><bottom style=\"hair\"><color auto=\"1\"/><\/bottom><diagonal/><\/border><border><left style=\"medium\"><color auto=\"1\"/><\/left><right style=\"medium\"><color auto=\"1\"/><\/right><top style=\"hair\"><color auto=\"1\"/><\/top><bottom style=\"hair\"><color auto=\"1\"/><\/bottom><diagonal/><\/border><border><left style=\"medium\"><color auto=\"1\"/><\/left><right/><top style=\"hair\"><color auto=\"1\"/><\/top><bottom style=\"hair\"><color auto=\"1\"/><\/bottom><diagonal/><\/border><border><left style=\"double\"><color auto=\"1\"/><\/left><right/><top style=\"hair\"><color auto=\"1\"/><\/top><bottom style=\"double\"><color auto=\"1\"/><\/bottom><diagonal/><\/border><border><left style=\"medium\"><color auto=\"1\"/><\/left><right style=\"medium\"><color auto=\"1\"/><\/right><top style=\"hair\"><color auto=\"1\"/><\/top><bottom style=\"double\"><color auto=\"1\"/><\/bottom><diagonal/><\/border><border><left style=\"medium\"><color auto=\"1\"/><\/left><right/><top style=\"hair\"><color auto=\"1\"/><\/top><bottom style=\"double\"><color auto=\"1\"/><\/bottom><diagonal/><\/border><\/borders><cellStyleXfs count=\"45\"><xf numFmtId=\"0\" fontId=\"0\" fillId=\"0\" borderId=\"0\"/><xf numFmtId=\"0\" fontId=\"1\" fillId=\"2\" borderId=\"0\" applyBorder=\"0\" applyAlignment=\"0\" applyProtection=\"0\"/><xf numFmtId=\"0\" fontId=\"1\" fillId=\"3\" borderId=\"0\" applyBorder=\"0\" applyAlignment=\"0\" applyProtection=\"0\"/><xf numFmtId=\"0\" fontId=\"1\" fillId=\"4\" borderId=\"0\" applyBorder=\"0\" applyAlignment=\"0\" applyProtection=\"0\"/><xf numFmtId=\"0\" fontId=\"1\" fillId=\"5\" borderId=\"0\" applyBorder=\"0\" applyAlignment=\"0\" applyProtection=\"0\"/><xf numFmtId=\"0\" fontId=\"1\" fillId=\"6\" borderId=\"0\" applyBorder=\"0\" applyAlignment=\"0\" applyProtection=\"0\"/><xf numFmtId=\"0\" fontId=\"1\" fillId=\"7\" borderId=\"0\" applyBorder=\"0\" applyAlignment=\"0\" applyProtection=\"0\"/><xf numFmtId=\"0\" fontId=\"1\" fillId=\"8\" borderId=\"0\" applyBorder=\"0\" applyAlignment=\"0\" applyProtection=\"0\"/><xf numFmtId=\"0\" fontId=\"1\" fillId=\"9\" borderId=\"0\" applyBorder=\"0\" applyAlignment=\"0\" applyProtection=\"0\"/><xf numFmtId=\"0\" fontId=\"1\" fillId=\"10\" borderId=\"0\" applyBorder=\"0\" applyAlignment=\"0\" applyProtection=\"0\"/><xf numFmtId=\"0\" fontId=\"1\" fillId=\"5\" borderId=\"0\" applyBorder=\"0\" applyAlignment=\"0\" applyProtection=\"0\"/><xf numFmtId=\"0\" fontId=\"1\" fillId=\"8\" borderId=\"0\" applyBorder=\"0\" applyAlignment=\"0\" applyProtection=\"0\"/><xf numFmtId=\"0\" fontId=\"1\" fillId=\"11\" borderId=\"0\" applyBorder=\"0\" applyAlignment=\"0\" applyProtection=\"0\"/><xf numFmtId=\"0\" fontId=\"2\" fillId=\"12\" borderId=\"0\" applyBorder=\"0\" applyAlignment=\"0\" applyProtection=\"0\"/><xf numFmtId=\"0\" fontId=\"2\" fillId=\"9\" borderId=\"0\" applyBorder=\"0\" applyAlignment=\"0\" applyProtection=\"0\"/><xf numFmtId=\"0\" fontId=\"2\" fillId=\"10\" borderId=\"0\" applyBorder=\"0\" applyAlignment=\"0\" applyProtection=\"0\"/><xf numFmtId=\"0\" fontId=\"2\" fillId=\"13\" borderId=\"0\" applyBorder=\"0\" applyAlignment=\"0\" applyProtection=\"0\"/><xf numFmtId=\"0\" fontId=\"2\" fillId=\"14\" borderId=\"0\" applyBorder=\"0\" applyAlignment=\"0\" applyProtection=\"0\"/><xf numFmtId=\"0\" fontId=\"2\" fillId=\"15\" borderId=\"0\" applyBorder=\"0\" applyAlignment=\"0\" applyProtection=\"0\"/><xf numFmtId=\"0\" fontId=\"3\" fillId=\"16\" borderId=\"1\" applyAlignment=\"0\" applyProtection=\"0\"/><xf numFmtId=\"0\" fontId=\"4\" fillId=\"0\" borderId=\"0\" applyBorder=\"0\" applyAlignment=\"0\" applyProtection=\"0\"/><xf numFmtId=\"0\" fontId=\"5\" fillId=\"0\" borderId=\"0\" applyBorder=\"0\" applyAlignment=\"0\" applyProtection=\"0\"/><xf numFmtId=\"0\" fontId=\"6\" fillId=\"0\" borderId=\"0\" applyBorder=\"0\" applyAlignment=\"0\" applyProtection=\"0\"/><xf numFmtId=\"0\" fontId=\"7\" fillId=\"4\" borderId=\"0\" applyBorder=\"0\" applyAlignment=\"0\" applyProtection=\"0\"/><xf numFmtId=\"0\" fontId=\"8\" fillId=\"17\" borderId=\"0\" applyBorder=\"0\" applyAlignment=\"0\" applyProtection=\"0\"/><xf numFmtId=\"0\" fontId=\"9\" fillId=\"7\" borderId=\"1\" applyAlignment=\"0\" applyProtection=\"0\"/><xf numFmtId=\"0\" fontId=\"10\" fillId=\"0\" borderId=\"2\" applyAlignment=\"0\" applyProtection=\"0\"/><xf numFmtId=\"0\" fontId=\"2\" fillId=\"18\" borderId=\"0\" applyBorder=\"0\" applyAlignment=\"0\" applyProtection=\"0\"/><xf numFmtId=\"0\" fontId=\"2\" fillId=\"19\" borderId=\"0\" applyBorder=\"0\" applyAlignment=\"0\" applyProtection=\"0\"/><xf numFmtId=\"0\" fontId=\"2\" fillId=\"20\" borderId=\"0\" applyBorder=\"0\" applyAlignment=\"0\" applyProtection=\"0\"/><xf numFmtId=\"0\" fontId=\"2\" fillId=\"13\" borderId=\"0\" applyBorder=\"0\" applyAlignment=\"0\" applyProtection=\"0\"/><xf numFmtId=\"0\" fontId=\"2\" fillId=\"14\" borderId=\"0\" applyBorder=\"0\" applyAlignment=\"0\" applyProtection=\"0\"/><xf numFmtId=\"0\" fontId=\"2\" fillId=\"21\" borderId=\"0\" applyBorder=\"0\" applyAlignment=\"0\" applyProtection=\"0\"/><xf numFmtId=\"0\" fontId=\"11\" fillId=\"22\" borderId=\"3\" applyAlignment=\"0\" applyProtection=\"0\"/><xf numFmtId=\"0\" fontId=\"12\" fillId=\"0\" borderId=\"4\" applyAlignment=\"0\" applyProtection=\"0\"/><xf numFmtId=\"0\" fontId=\"13\" fillId=\"0\" borderId=\"5\" applyAlignment=\"0\" applyProtection=\"0\"/><xf numFmtId=\"0\" fontId=\"14\" fillId=\"0\" borderId=\"6\" applyAlignment=\"0\" applyProtection=\"0\"/><xf numFmtId=\"0\" fontId=\"14\" fillId=\"0\" borderId=\"0\" applyBorder=\"0\" applyAlignment=\"0\" applyProtection=\"0\"/><xf numFmtId=\"0\" fontId=\"15\" fillId=\"23\" borderId=\"7\" applyAlignment=\"0\" applyProtection=\"0\"/><xf numFmtId=\"0\" fontId=\"16\" fillId=\"0\" borderId=\"8\" applyAlignment=\"0\" applyProtection=\"0\"/><xf numFmtId=\"0\" fontId=\"17\" fillId=\"3\" borderId=\"0\" applyBorder=\"0\" applyAlignment=\"0\" applyProtection=\"0\"/><xf numFmtId=\"0\" fontId=\"18\" fillId=\"16\" borderId=\"9\" applyAlignment=\"0\" applyProtection=\"0\"/><xf numFmtId=\"9\" fontId=\"19\" fillId=\"0\" borderId=\"0\" applyFont=\"0\" applyFill=\"0\" applyBorder=\"0\" applyAlignment=\"0\" applyProtection=\"0\"/><xf numFmtId=\"0\" fontId=\"11\" fillId=\"0\" borderId=\"0\"/><xf numFmtId=\"0\" fontId=\"20\" fillId=\"0\" borderId=\"0\"/><\/cellStyleXfs><cellXfs count=\"112\"><xf numFmtId=\"0\" fontId=\"0\" fillId=\"0\" borderId=\"0\" xfId=\"0\"/><xf numFmtId=\"0\" fontId=\"21\" fillId=\"0\" borderId=\"0\" xfId=\"0\" applyFont=\"1\" applyAlignment=\"1\"><alignment vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"22\" fillId=\"0\" borderId=\"0\" xfId=\"0\" applyFont=\"1\"/><xf numFmtId=\"0\" fontId=\"25\" fillId=\"0\" borderId=\"0\" xfId=\"0\" applyFont=\"1\" applyAlignment=\"1\"><alignment vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"22\" fillId=\"0\" borderId=\"0\" xfId=\"0\" applyFont=\"1\" applyAlignment=\"1\"><alignment vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"25\" fillId=\"0\" borderId=\"0\" xfId=\"0\" applyFont=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"31\" fillId=\"0\" borderId=\"0\" xfId=\"0\" applyFont=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"32\" fillId=\"0\" borderId=\"0\" xfId=\"44\" applyFont=\"1\"/><xf numFmtId=\"0\" fontId=\"33\" fillId=\"0\" borderId=\"0\" xfId=\"44\" applyFont=\"1\"/><xf numFmtId=\"0\" fontId=\"31\" fillId=\"0\" borderId=\"27\" xfId=\"0\" applyFont=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"32\" fillId=\"24\" borderId=\"27\" xfId=\"44\" applyFont=\"1\" applyFill=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"32\" fillId=\"25\" borderId=\"27\" xfId=\"44\" applyFont=\"1\" applyFill=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"32\" fillId=\"26\" borderId=\"27\" xfId=\"44\" applyFont=\"1\" applyFill=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"31\" fillId=\"4\" borderId=\"15\" xfId=\"0\" applyFont=\"1\" applyFill=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"22\" fillId=\"0\" borderId=\"27\" xfId=\"0\" applyFont=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"21\" fillId=\"0\" borderId=\"28\" xfId=\"0\" applyFont=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"188\" fontId=\"34\" fillId=\"28\" borderId=\"43\" xfId=\"43\" applyNumberFormat=\"1\" applyFont=\"1\" applyFill=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"21\" fillId=\"0\" borderId=\"31\" xfId=\"0\" applyFont=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"1\" fontId=\"21\" fillId=\"0\" borderId=\"31\" xfId=\"0\" applyNumberFormat=\"1\" applyFont=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"21\" fillId=\"0\" borderId=\"17\" xfId=\"0\" applyFont=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"21\" fillId=\"0\" borderId=\"18\" xfId=\"0\" applyFont=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"21\" fillId=\"0\" borderId=\"0\" xfId=\"0\" applyFont=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"21\" fillId=\"0\" borderId=\"19\" xfId=\"0\" applyFont=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"21\" fillId=\"0\" borderId=\"20\" xfId=\"0\" applyFont=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"left\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"35\" fillId=\"0\" borderId=\"23\" xfId=\"0\" applyFont=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"left\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"33\" fillId=\"0\" borderId=\"27\" xfId=\"0\" applyFont=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"33\" fillId=\"24\" borderId=\"27\" xfId=\"44\" applyFont=\"1\" applyFill=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"36\" fillId=\"24\" borderId=\"27\" xfId=\"44\" applyFont=\"1\" applyFill=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"33\" fillId=\"25\" borderId=\"27\" xfId=\"44\" applyFont=\"1\" applyFill=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"36\" fillId=\"25\" borderId=\"27\" xfId=\"44\" applyFont=\"1\" applyFill=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"33\" fillId=\"26\" borderId=\"27\" xfId=\"44\" applyFont=\"1\" applyFill=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"36\" fillId=\"26\" borderId=\"27\" xfId=\"44\" applyFont=\"1\" applyFill=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\"/><\/xf><xf numFmtId=\"188\" fontId=\"22\" fillId=\"0\" borderId=\"41\" xfId=\"43\" applyNumberFormat=\"1\" applyFont=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"21\" fillId=\"0\" borderId=\"21\" xfId=\"0\" applyFont=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"21\" fillId=\"0\" borderId=\"22\" xfId=\"0\" applyFont=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"21\" fillId=\"0\" borderId=\"23\" xfId=\"0\" applyFont=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"left\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"21\" fillId=\"0\" borderId=\"33\" xfId=\"0\" applyFont=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"188\" fontId=\"34\" fillId=\"28\" borderId=\"42\" xfId=\"43\" applyNumberFormat=\"1\" applyFont=\"1\" applyFill=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"21\" fillId=\"0\" borderId=\"20\" xfId=\"0\" applyFont=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"37\" fillId=\"0\" borderId=\"23\" xfId=\"0\" applyFont=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"left\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"21\" fillId=\"0\" borderId=\"19\" xfId=\"0\" applyFont=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"left\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"21\" fillId=\"0\" borderId=\"23\" xfId=\"0\" quotePrefix=\"1\" applyFont=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"left\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"22\" fillId=\"0\" borderId=\"23\" xfId=\"0\" applyFont=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"22\" fillId=\"0\" borderId=\"23\" xfId=\"0\" applyFont=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"22\" fillId=\"0\" borderId=\"27\" xfId=\"0\" applyFont=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"21\" fillId=\"4\" borderId=\"10\" xfId=\"0\" applyFont=\"1\" applyFill=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"21\" fillId=\"4\" borderId=\"24\" xfId=\"0\" applyFont=\"1\" applyFill=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"25\" fillId=\"4\" borderId=\"25\" xfId=\"0\" applyFont=\"1\" applyFill=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"187\" fontId=\"25\" fillId=\"4\" borderId=\"24\" xfId=\"0\" applyNumberFormat=\"1\" applyFont=\"1\" applyFill=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"25\" fillId=\"4\" borderId=\"24\" xfId=\"0\" applyFont=\"1\" applyFill=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"21\" fillId=\"4\" borderId=\"11\" xfId=\"0\" applyFont=\"1\" applyFill=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"22\" fillId=\"4\" borderId=\"13\" xfId=\"0\" applyFont=\"1\" applyFill=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"38\" fillId=\"0\" borderId=\"0\" xfId=\"0\" applyFont=\"1\" applyAlignment=\"1\"><alignment vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"37\" fillId=\"0\" borderId=\"0\" xfId=\"0\" applyFont=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"29\" fillId=\"0\" borderId=\"0\" xfId=\"0\" applyFont=\"1\" applyAlignment=\"1\"><alignment vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"37\" fillId=\"0\" borderId=\"0\" xfId=\"0\" applyFont=\"1\" applyAlignment=\"1\"><alignment vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"37\" fillId=\"0\" borderId=\"0\" xfId=\"0\" applyFont=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"37\" fillId=\"0\" borderId=\"0\" xfId=\"0\" applyFont=\"1\" applyAlignment=\"1\"><alignment horizontal=\"left\"/><\/xf><xf numFmtId=\"0\" fontId=\"40\" fillId=\"0\" borderId=\"0\" xfId=\"0\" applyFont=\"1\" applyAlignment=\"1\"><alignment vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"29\" fillId=\"0\" borderId=\"0\" xfId=\"0\" applyFont=\"1\"/><xf numFmtId=\"0\" fontId=\"21\" fillId=\"0\" borderId=\"0\" xfId=\"0\" applyFont=\"1\"/><xf numFmtId=\"188\" fontId=\"34\" fillId=\"28\" borderId=\"44\" xfId=\"43\" applyNumberFormat=\"1\" applyFont=\"1\" applyFill=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"41\" fillId=\"0\" borderId=\"0\" xfId=\"0\" applyFont=\"1\" applyAlignment=\"1\"><alignment vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"21\" fillId=\"0\" borderId=\"45\" xfId=\"0\" applyFont=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"21\" fillId=\"0\" borderId=\"48\" xfId=\"0\" applyFont=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"21\" fillId=\"0\" borderId=\"49\" xfId=\"0\" applyFont=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"21\" fillId=\"0\" borderId=\"50\" xfId=\"0\" applyFont=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"21\" fillId=\"0\" borderId=\"52\" xfId=\"0\" applyFont=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"21\" fillId=\"0\" borderId=\"51\" xfId=\"0\" applyFont=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"21\" fillId=\"0\" borderId=\"53\" xfId=\"0\" applyFont=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"21\" fillId=\"0\" borderId=\"54\" xfId=\"0\" applyFont=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"21\" fillId=\"0\" borderId=\"55\" xfId=\"0\" applyFont=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"25\" fillId=\"0\" borderId=\"34\" xfId=\"0\" applyFont=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"25\" fillId=\"0\" borderId=\"35\" xfId=\"0\" applyFont=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"32\" fillId=\"27\" borderId=\"27\" xfId=\"44\" applyFont=\"1\" applyFill=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"32\" fillId=\"24\" borderId=\"27\" xfId=\"44\" applyFont=\"1\" applyFill=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"32\" fillId=\"25\" borderId=\"27\" xfId=\"44\" applyFont=\"1\" applyFill=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"32\" fillId=\"26\" borderId=\"34\" xfId=\"44\" applyFont=\"1\" applyFill=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"32\" fillId=\"26\" borderId=\"35\" xfId=\"44\" applyFont=\"1\" applyFill=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"32\" fillId=\"26\" borderId=\"36\" xfId=\"44\" applyFont=\"1\" applyFill=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"32\" fillId=\"26\" borderId=\"27\" xfId=\"44\" applyFont=\"1\" applyFill=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\"/><\/xf><xf numFmtId=\"188\" fontId=\"25\" fillId=\"4\" borderId=\"16\" xfId=\"0\" applyNumberFormat=\"1\" applyFont=\"1\" applyFill=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"28\" fillId=\"4\" borderId=\"37\" xfId=\"0\" applyFont=\"1\" applyFill=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"28\" fillId=\"4\" borderId=\"38\" xfId=\"0\" applyFont=\"1\" applyFill=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"28\" fillId=\"4\" borderId=\"39\" xfId=\"0\" applyFont=\"1\" applyFill=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"28\" fillId=\"4\" borderId=\"40\" xfId=\"0\" applyFont=\"1\" applyFill=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"23\" fillId=\"0\" borderId=\"0\" xfId=\"0\" applyFont=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"26\" fillId=\"0\" borderId=\"0\" xfId=\"0\" applyFont=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"25\" fillId=\"4\" borderId=\"10\" xfId=\"0\" applyFont=\"1\" applyFill=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"28\" fillId=\"4\" borderId=\"11\" xfId=\"0\" applyFont=\"1\" applyFill=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"29\" fillId=\"4\" borderId=\"11\" xfId=\"0\" applyFont=\"1\" applyFill=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"25\" fillId=\"4\" borderId=\"11\" xfId=\"0\" applyFont=\"1\" applyFill=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\" textRotation=\"90\" wrapText=\"1\" shrinkToFit=\"1\"/><\/xf><xf numFmtId=\"0\" fontId=\"28\" fillId=\"4\" borderId=\"12\" xfId=\"0\" applyFont=\"1\" applyFill=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"28\" fillId=\"4\" borderId=\"13\" xfId=\"0\" applyFont=\"1\" applyFill=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"29\" fillId=\"4\" borderId=\"14\" xfId=\"0\" applyFont=\"1\" applyFill=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"29\" fillId=\"4\" borderId=\"15\" xfId=\"0\" applyFont=\"1\" applyFill=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"21\" fillId=\"0\" borderId=\"46\" xfId=\"0\" applyFont=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"left\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"21\" fillId=\"0\" borderId=\"47\" xfId=\"0\" applyFont=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"left\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"21\" fillId=\"0\" borderId=\"51\" xfId=\"0\" applyFont=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"left\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"21\" fillId=\"0\" borderId=\"31\" xfId=\"0\" applyFont=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"left\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"21\" fillId=\"0\" borderId=\"32\" xfId=\"0\" applyFont=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"left\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"21\" fillId=\"0\" borderId=\"51\" xfId=\"0\" applyFont=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"21\" fillId=\"0\" borderId=\"29\" xfId=\"0\" applyFont=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"left\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"21\" fillId=\"0\" borderId=\"30\" xfId=\"0\" applyFont=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"left\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"37\" fillId=\"0\" borderId=\"0\" xfId=\"0\" applyFont=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"25\" fillId=\"0\" borderId=\"27\" xfId=\"0\" applyFont=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"21\" fillId=\"0\" borderId=\"54\" xfId=\"0\" applyFont=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"0\" fontId=\"37\" fillId=\"0\" borderId=\"0\" xfId=\"0\" applyFont=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"9\" fontId=\"25\" fillId=\"4\" borderId=\"24\" xfId=\"42\" applyFont=\"1\" applyFill=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"9\" fontId=\"25\" fillId=\"4\" borderId=\"26\" xfId=\"42\" applyFont=\"1\" applyFill=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"9\" fontId=\"25\" fillId=\"4\" borderId=\"25\" xfId=\"42\" applyFont=\"1\" applyFill=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><xf numFmtId=\"189\" fontId=\"25\" fillId=\"4\" borderId=\"16\" xfId=\"0\" applyNumberFormat=\"1\" applyFont=\"1\" applyFill=\"1\" applyBorder=\"1\" applyAlignment=\"1\"><alignment horizontal=\"center\" vertical=\"center\"/><\/xf><\/cellXfs><cellStyles count=\"45\"><cellStyle name=\"20% - ส่วนที่ถูกเน้น1\" xfId=\"1\" xr:uid=\"{00000000-0005-0000-0000-000000000000}\"/><cellStyle name=\"20% - ส่วนที่ถูกเน้น2\" xfId=\"2\" xr:uid=\"{00000000-0005-0000-0000-000001000000}\"/><cellStyle name=\"20% - ส่วนที่ถูกเน้น3\" xfId=\"3\" xr:uid=\"{00000000-0005-0000-0000-000002000000}\"/><cellStyle name=\"20% - ส่วนที่ถูกเน้น4\" xfId=\"4\" xr:uid=\"{00000000-0005-0000-0000-000003000000}\"/><cellStyle name=\"20% - ส่วนที่ถูกเน้น5\" xfId=\"5\" xr:uid=\"{00000000-0005-0000-0000-000004000000}\"/><cellStyle name=\"20% - ส่วนที่ถูกเน้น6\" xfId=\"6\" xr:uid=\"{00000000-0005-0000-0000-000005000000}\"/><cellStyle name=\"40% - ส่วนที่ถูกเน้น1\" xfId=\"7\" xr:uid=\"{00000000-0005-0000-0000-000006000000}\"/><cellStyle name=\"40% - ส่วนที่ถูกเน้น2\" xfId=\"8\" xr:uid=\"{00000000-0005-0000-0000-000007000000}\"/><cellStyle name=\"40% - ส่วนที่ถูกเน้น3\" xfId=\"9\" xr:uid=\"{00000000-0005-0000-0000-000008000000}\"/><cellStyle name=\"40% - ส่วนที่ถูกเน้น4\" xfId=\"10\" xr:uid=\"{00000000-0005-0000-0000-000009000000}\"/><cellStyle name=\"40% - ส่วนที่ถูกเน้น5\" xfId=\"11\" xr:uid=\"{00000000-0005-0000-0000-00000A000000}\"/><cellStyle name=\"40% - ส่วนที่ถูกเน้น6\" xfId=\"12\" xr:uid=\"{00000000-0005-0000-0000-00000B000000}\"/><cellStyle name=\"60% - ส่วนที่ถูกเน้น1\" xfId=\"13\" xr:uid=\"{00000000-0005-0000-0000-00000C000000}\"/><cellStyle name=\"60% - ส่วนที่ถูกเน้น2\" xfId=\"14\" xr:uid=\"{00000000-0005-0000-0000-00000D000000}\"/><cellStyle name=\"60% - ส่วนที่ถูกเน้น3\" xfId=\"15\" xr:uid=\"{00000000-0005-0000-0000-00000E000000}\"/><cellStyle name=\"60% - ส่วนที่ถูกเน้น4\" xfId=\"16\" xr:uid=\"{00000000-0005-0000-0000-00000F000000}\"/><cellStyle name=\"60% - ส่วนที่ถูกเน้น5\" xfId=\"17\" xr:uid=\"{00000000-0005-0000-0000-000010000000}\"/><cellStyle name=\"60% - ส่วนที่ถูกเน้น6\" xfId=\"18\" xr:uid=\"{00000000-0005-0000-0000-000011000000}\"/><cellStyle name=\"Normal\" xfId=\"0\" builtinId=\"0\"/><cellStyle name=\"Normal 2 2\" xfId=\"43\" xr:uid=\"{0FA0E08C-7D99-427F-B08A-BF047C51956F}\"/><cellStyle name=\"Normal_งาน5กำแพงตลิ่งคลองโพมา\" xfId=\"44\" xr:uid=\"{E3821DD0-D6A5-4334-8742-7A467BD1A2AE}\"/><cellStyle name=\"Percent\" xfId=\"42\" builtinId=\"5\"/><cellStyle name=\"การคำนวณ\" xfId=\"19\" xr:uid=\"{00000000-0005-0000-0000-000013000000}\"/><cellStyle name=\"ข้อความเตือน\" xfId=\"21\" xr:uid=\"{00000000-0005-0000-0000-000014000000}\"/><cellStyle name=\"ข้อความอธิบาย\" xfId=\"20\" xr:uid=\"{00000000-0005-0000-0000-000015000000}\"/><cellStyle name=\"ชื่อเรื่อง\" xfId=\"22\" xr:uid=\"{00000000-0005-0000-0000-000016000000}\"/><cellStyle name=\"เซลล์ตรวจสอบ\" xfId=\"38\" xr:uid=\"{00000000-0005-0000-0000-000017000000}\"/><cellStyle name=\"เซลล์ที่มีการเชื่อมโยง\" xfId=\"39\" xr:uid=\"{00000000-0005-0000-0000-000018000000}\"/><cellStyle name=\"ดี\" xfId=\"23\" xr:uid=\"{00000000-0005-0000-0000-000019000000}\"/><cellStyle name=\"ป้อนค่า\" xfId=\"25\" xr:uid=\"{00000000-0005-0000-0000-00001A000000}\"/><cellStyle name=\"ปานกลาง\" xfId=\"24\" xr:uid=\"{00000000-0005-0000-0000-00001B000000}\"/><cellStyle name=\"ผลรวม\" xfId=\"26\" xr:uid=\"{00000000-0005-0000-0000-00001C000000}\"/><cellStyle name=\"แย่\" xfId=\"40\" xr:uid=\"{00000000-0005-0000-0000-00001D000000}\"/><cellStyle name=\"ส่วนที่ถูกเน้น1\" xfId=\"27\" xr:uid=\"{00000000-0005-0000-0000-00001E000000}\"/><cellStyle name=\"ส่วนที่ถูกเน้น2\" xfId=\"28\" xr:uid=\"{00000000-0005-0000-0000-00001F000000}\"/><cellStyle name=\"ส่วนที่ถูกเน้น3\" xfId=\"29\" xr:uid=\"{00000000-0005-0000-0000-000020000000}\"/><cellStyle name=\"ส่วนที่ถูกเน้น4\" xfId=\"30\" xr:uid=\"{00000000-0005-0000-0000-000021000000}\"/><cellStyle name=\"ส่วนที่ถูกเน้น5\" xfId=\"31\" xr:uid=\"{00000000-0005-0000-0000-000022000000}\"/><cellStyle name=\"ส่วนที่ถูกเน้น6\" xfId=\"32\" xr:uid=\"{00000000-0005-0000-0000-000023000000}\"/><cellStyle name=\"แสดงผล\" xfId=\"41\" xr:uid=\"{00000000-0005-0000-0000-000024000000}\"/><cellStyle name=\"หมายเหตุ\" xfId=\"33\" xr:uid=\"{00000000-0005-0000-0000-000025000000}\"/><cellStyle name=\"หัวเรื่อง 1\" xfId=\"34\" xr:uid=\"{00000000-0005-0000-0000-000026000000}\"/><cellStyle name=\"หัวเรื่อง 2\" xfId=\"35\" xr:uid=\"{00000000-0005-0000-0000-000027000000}\"/><cellStyle name=\"หัวเรื่อง 3\" xfId=\"36\" xr:uid=\"{00000000-0005-0000-0000-000028000000}\"/><cellStyle name=\"หัวเรื่อง 4\" xfId=\"37\" xr:uid=\"{00000000-0005-0000-0000-000029000000}\"/><\/cellStyles><dxfs count=\"0\"/><tableStyles count=\"0\" defaultTableStyle=\"TableStyleMedium2\" defaultPivotStyle=\"PivotStyleLight16\"/><extLst><ext uri=\"{EB79DEF2-80B8-43e5-95BD-54CBDDF9020C}\" xmlns:x14=\"http://schemas.microsoft.com/office/spreadsheetml/2009/9/main\"><x14:slicerStyles defaultSlicerStyle=\"SlicerStyleLight1\"/><\/ext><ext uri=\"{9260A510-F301-46a8-8635-F512D64BE5F5}\" xmlns:x15=\"http://schemas.microsoft.com/office/spreadsheetml/2010/11/main\"><x15:timelineStyles defaultTimelineStyle=\"TimeSlicerStyleLight1\"/><\/ext><\/extLst><\/styleSheet>","theme":"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<a:theme xmlns:a=\"http://schemas.openxmlformats.org/drawingml/2006/main\" name=\"Office 2013 - 2022 Theme\"><a:themeElements><a:clrScheme name=\"Office 2013 - 2022\"><a:dk1><a:sysClr val=\"windowText\" lastClr=\"000000\"/><\/a:dk1><a:lt1><a:sysClr val=\"window\" lastClr=\"FFFFFF\"/><\/a:lt1><a:dk2><a:srgbClr val=\"44546A\"/><\/a:dk2><a:lt2><a:srgbClr val=\"E7E6E6\"/><\/a:lt2><a:accent1><a:srgbClr val=\"4472C4\"/><\/a:accent1><a:accent2><a:srgbClr val=\"ED7D31\"/><\/a:accent2><a:accent3><a:srgbClr val=\"A5A5A5\"/><\/a:accent3><a:accent4><a:srgbClr val=\"FFC000\"/><\/a:accent4><a:accent5><a:srgbClr val=\"5B9BD5\"/><\/a:accent5><a:accent6><a:srgbClr val=\"70AD47\"/><\/a:accent6><a:hlink><a:srgbClr val=\"0563C1\"/><\/a:hlink><a:folHlink><a:srgbClr val=\"954F72\"/><\/a:folHlink><\/a:clrScheme><a:fontScheme name=\"Office 2013 - 2022\"><a:majorFont><a:latin typeface=\"Calibri Light\" panose=\"020F0302020204030204\"/><a:ea typeface=\"\"/><a:cs typeface=\"\"/><a:font script=\"Jpan\" typeface=\"游ゴシック Light\"/><a:font script=\"Hang\" typeface=\"맑은 고딕\"/><a:font script=\"Hans\" typeface=\"等线 Light\"/><a:font script=\"Hant\" typeface=\"新細明體\"/><a:font script=\"Arab\" typeface=\"Times New Roman\"/><a:font script=\"Hebr\" typeface=\"Times New Roman\"/><a:font script=\"Thai\" typeface=\"Tahoma\"/><a:font script=\"Ethi\" typeface=\"Nyala\"/><a:font script=\"Beng\" typeface=\"Vrinda\"/><a:font script=\"Gujr\" typeface=\"Shruti\"/><a:font script=\"Khmr\" typeface=\"MoolBoran\"/><a:font script=\"Knda\" typeface=\"Tunga\"/><a:font script=\"Guru\" typeface=\"Raavi\"/><a:font script=\"Cans\" typeface=\"Euphemia\"/><a:font script=\"Cher\" typeface=\"Plantagenet Cherokee\"/><a:font script=\"Yiii\" typeface=\"Microsoft Yi Baiti\"/><a:font script=\"Tibt\" typeface=\"Microsoft Himalaya\"/><a:font script=\"Thaa\" typeface=\"MV Boli\"/><a:font script=\"Deva\" typeface=\"Mangal\"/><a:font script=\"Telu\" typeface=\"Gautami\"/><a:font script=\"Taml\" typeface=\"Latha\"/><a:font script=\"Syrc\" typeface=\"Estrangelo Edessa\"/><a:font script=\"Orya\" typeface=\"Kalinga\"/><a:font script=\"Mlym\" typeface=\"Kartika\"/><a:font script=\"Laoo\" typeface=\"DokChampa\"/><a:font script=\"Sinh\" typeface=\"Iskoola Pota\"/><a:font script=\"Mong\" typeface=\"Mongolian Baiti\"/><a:font script=\"Viet\" typeface=\"Times New Roman\"/><a:font script=\"Uigh\" typeface=\"Microsoft Uighur\"/><a:font script=\"Geor\" typeface=\"Sylfaen\"/><a:font script=\"Armn\" typeface=\"Arial\"/><a:font script=\"Bugi\" typeface=\"Leelawadee UI\"/><a:font script=\"Bopo\" typeface=\"Microsoft JhengHei\"/><a:font script=\"Java\" typeface=\"Javanese Text\"/><a:font script=\"Lisu\" typeface=\"Segoe UI\"/><a:font script=\"Mymr\" typeface=\"Myanmar Text\"/><a:font script=\"Nkoo\" typeface=\"Ebrima\"/><a:font script=\"Olck\" typeface=\"Nirmala UI\"/><a:font script=\"Osma\" typeface=\"Ebrima\"/><a:font script=\"Phag\" typeface=\"Phagspa\"/><a:font script=\"Syrn\" typeface=\"Estrangelo Edessa\"/><a:font script=\"Syrj\" typeface=\"Estrangelo Edessa\"/><a:font script=\"Syre\" typeface=\"Estrangelo Edessa\"/><a:font script=\"Sora\" typeface=\"Nirmala UI\"/><a:font script=\"Tale\" typeface=\"Microsoft Tai Le\"/><a:font script=\"Talu\" typeface=\"Microsoft New Tai Lue\"/><a:font script=\"Tfng\" typeface=\"Ebrima\"/><\/a:majorFont><a:minorFont><a:latin typeface=\"Calibri\" panose=\"020F0502020204030204\"/><a:ea typeface=\"\"/><a:cs typeface=\"\"/><a:font script=\"Jpan\" typeface=\"游ゴシック\"/><a:font script=\"Hang\" typeface=\"맑은 고딕\"/><a:font script=\"Hans\" typeface=\"等线\"/><a:font script=\"Hant\" typeface=\"新細明體\"/><a:font script=\"Arab\" typeface=\"Arial\"/><a:font script=\"Hebr\" typeface=\"Arial\"/><a:font script=\"Thai\" typeface=\"Tahoma\"/><a:font script=\"Ethi\" typeface=\"Nyala\"/><a:font script=\"Beng\" typeface=\"Vrinda\"/><a:font script=\"Gujr\" typeface=\"Shruti\"/><a:font script=\"Khmr\" typeface=\"DaunPenh\"/><a:font script=\"Knda\" typeface=\"Tunga\"/><a:font script=\"Guru\" typeface=\"Raavi\"/><a:font script=\"Cans\" typeface=\"Euphemia\"/><a:font script=\"Cher\" typeface=\"Plantagenet Cherokee\"/><a:font script=\"Yiii\" typeface=\"Microsoft Yi Baiti\"/><a:font script=\"Tibt\" typeface=\"Microsoft Himalaya\"/><a:font script=\"Thaa\" typeface=\"MV Boli\"/><a:font script=\"Deva\" typeface=\"Mangal\"/><a:font script=\"Telu\" typeface=\"Gautami\"/><a:font script=\"Taml\" typeface=\"Latha\"/><a:font script=\"Syrc\" typeface=\"Estrangelo Edessa\"/><a:font script=\"Orya\" typeface=\"Kalinga\"/><a:font script=\"Mlym\" typeface=\"Kartika\"/><a:font script=\"Laoo\" typeface=\"DokChampa\"/><a:font script=\"Sinh\" typeface=\"Iskoola Pota\"/><a:font script=\"Mong\" typeface=\"Mongolian Baiti\"/><a:font script=\"Viet\" typeface=\"Arial\"/><a:font script=\"Uigh\" typeface=\"Microsoft Uighur\"/><a:font script=\"Geor\" typeface=\"Sylfaen\"/><a:font script=\"Armn\" typeface=\"Arial\"/><a:font script=\"Bugi\" typeface=\"Leelawadee UI\"/><a:font script=\"Bopo\" typeface=\"Microsoft JhengHei\"/><a:font script=\"Java\" typeface=\"Javanese Text\"/><a:font script=\"Lisu\" typeface=\"Segoe UI\"/><a:font script=\"Mymr\" typeface=\"Myanmar Text\"/><a:font script=\"Nkoo\" typeface=\"Ebrima\"/><a:font script=\"Olck\" typeface=\"Nirmala UI\"/><a:font script=\"Osma\" typeface=\"Ebrima\"/><a:font script=\"Phag\" typeface=\"Phagspa\"/><a:font script=\"Syrn\" typeface=\"Estrangelo Edessa\"/><a:font script=\"Syrj\" typeface=\"Estrangelo Edessa\"/><a:font script=\"Syre\" typeface=\"Estrangelo Edessa\"/><a:font script=\"Sora\" typeface=\"Nirmala UI\"/><a:font script=\"Tale\" typeface=\"Microsoft Tai Le\"/><a:font script=\"Talu\" typeface=\"Microsoft New Tai Lue\"/><a:font script=\"Tfng\" typeface=\"Ebrima\"/><\/a:minorFont><\/a:fontScheme><a:fmtScheme name=\"Office 2013 - 2022\"><a:fillStyleLst><a:solidFill><a:schemeClr val=\"phClr\"/><\/a:solidFill><a:gradFill rotWithShape=\"1\"><a:gsLst><a:gs pos=\"0\"><a:schemeClr val=\"phClr\"><a:lumMod val=\"110000\"/><a:satMod val=\"105000\"/><a:tint val=\"67000\"/><\/a:schemeClr><\/a:gs><a:gs pos=\"50000\"><a:schemeClr val=\"phClr\"><a:lumMod val=\"105000\"/><a:satMod val=\"103000\"/><a:tint val=\"73000\"/><\/a:schemeClr><\/a:gs><a:gs pos=\"100000\"><a:schemeClr val=\"phClr\"><a:lumMod val=\"105000\"/><a:satMod val=\"109000\"/><a:tint val=\"81000\"/><\/a:schemeClr><\/a:gs><\/a:gsLst><a:lin ang=\"5400000\" scaled=\"0\"/><\/a:gradFill><a:gradFill rotWithShape=\"1\"><a:gsLst><a:gs pos=\"0\"><a:schemeClr val=\"phClr\"><a:satMod val=\"103000\"/><a:lumMod val=\"102000\"/><a:tint val=\"94000\"/><\/a:schemeClr><\/a:gs><a:gs pos=\"50000\"><a:schemeClr val=\"phClr\"><a:satMod val=\"110000\"/><a:lumMod val=\"100000\"/><a:shade val=\"100000\"/><\/a:schemeClr><\/a:gs><a:gs pos=\"100000\"><a:schemeClr val=\"phClr\"><a:lumMod val=\"99000\"/><a:satMod val=\"120000\"/><a:shade val=\"78000\"/><\/a:schemeClr><\/a:gs><\/a:gsLst><a:lin ang=\"5400000\" scaled=\"0\"/><\/a:gradFill><\/a:fillStyleLst><a:lnStyleLst><a:ln w=\"6350\" cap=\"flat\" cmpd=\"sng\" algn=\"ctr\"><a:solidFill><a:schemeClr val=\"phClr\"/><\/a:solidFill><a:prstDash val=\"solid\"/><a:miter lim=\"800000\"/><\/a:ln><a:ln w=\"12700\" cap=\"flat\" cmpd=\"sng\" algn=\"ctr\"><a:solidFill><a:schemeClr val=\"phClr\"/><\/a:solidFill><a:prstDash val=\"solid\"/><a:miter lim=\"800000\"/><\/a:ln><a:ln w=\"19050\" cap=\"flat\" cmpd=\"sng\" algn=\"ctr\"><a:solidFill><a:schemeClr val=\"phClr\"/><\/a:solidFill><a:prstDash val=\"solid\"/><a:miter lim=\"800000\"/><\/a:ln><\/a:lnStyleLst><a:effectStyleLst><a:effectStyle><a:effectLst/><\/a:effectStyle><a:effectStyle><a:effectLst/><\/a:effectStyle><a:effectStyle><a:effectLst><a:outerShdw blurRad=\"57150\" dist=\"19050\" dir=\"5400000\" algn=\"ctr\" rotWithShape=\"0\"><a:srgbClr val=\"000000\"><a:alpha val=\"63000\"/><\/a:srgbClr><\/a:outerShdw><\/a:effectLst><\/a:effectStyle><\/a:effectStyleLst><a:bgFillStyleLst><a:solidFill><a:schemeClr val=\"phClr\"/><\/a:solidFill><a:solidFill><a:schemeClr val=\"phClr\"><a:tint val=\"95000\"/><a:satMod val=\"170000\"/><\/a:schemeClr><\/a:solidFill><a:gradFill rotWithShape=\"1\"><a:gsLst><a:gs pos=\"0\"><a:schemeClr val=\"phClr\"><a:tint val=\"93000\"/><a:satMod val=\"150000\"/><a:shade val=\"98000\"/><a:lumMod val=\"102000\"/><\/a:schemeClr><\/a:gs><a:gs pos=\"50000\"><a:schemeClr val=\"phClr\"><a:tint val=\"98000\"/><a:satMod val=\"130000\"/><a:shade val=\"90000\"/><a:lumMod val=\"103000\"/><\/a:schemeClr><\/a:gs><a:gs pos=\"100000\"><a:schemeClr val=\"phClr\"><a:shade val=\"63000\"/><a:satMod val=\"120000\"/><\/a:schemeClr><\/a:gs><\/a:gsLst><a:lin ang=\"5400000\" scaled=\"0\"/><\/a:gradFill><\/a:bgFillStyleLst><\/a:fmtScheme><\/a:themeElements><a:objectDefaults/><a:extraClrSchemeLst/><a:extLst><a:ext uri=\"{05A4C25C-085E-4340-85A3-A5531E510DB2}\"><thm15:themeFamily xmlns:thm15=\"http://schemas.microsoft.com/office/thememl/2012/main\" name=\"Office 2013 - 2022 Theme\" id=\"{62F939B6-93AF-4DB8-9C6B-D6C7DFDC589F}\" vid=\"{4A3C46E8-61CC-4603-A589-7422A47A8E4A}\"/><\/a:ext><\/a:extLst><\/a:theme>","logo":"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"};
+(function(){
+"use strict";
+var KEY="fm008-plan-v1", DAY=864e5;
+var TH_M=["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
+var CATS=["Supervisor","Foreman","Skill"];
+var $=function(id){return document.getElementById(id)};
+
+function blankMH(){return [["","","7"],["","","7"],["","","7"]]}
+function blankTask(){return {name:"",start:"",end:"",resp:"",tools:"",mh:blankMH(),mh2:blankMH()}}
+function sample(){return {
+  title:"งานออกแบบวิธีการรื้อถอนทางเดินคอนกรีตเก่า บริเวณ Intake รฟ.พระนครใต้",planNo:"6",pmOrder:"",
+  dept:"หวป-ธ.",division:"กวย-ธ.",bureau:"ฝ่ายบำรุงรักษาโยธา",scale:"auto",dept2On:false,dept2:"",
+  tasks:[
+   {name:"วางแผนงานและเตรียมงาน",start:"2025-07-01",end:"2025-07-09",resp:"แผนก หวป-ธ.",tools:"",mh:[["1","2","7"],["","","7"],["","","7"]],mh2:blankMH()},
+   {name:"งานสำรวจภาคสนาม",start:"2025-07-01",end:"2025-07-15",resp:"แผนก หวป-ธ.",tools:"",mh:[["2","2","7"],["1","2","7"],["","","7"]],mh2:blankMH()},
+   {name:"ออกแบบ, คำนวณ และ\nจัดทำเอกสารงานจ้างก่อสร้าง",start:"2025-07-01",end:"2025-07-31",resp:"แผนก หวป-ธ.",tools:"",mh:[["2","16","7"],["1","16","7"],["","","7"]],mh2:blankMH()}
+  ],
+  notes:"ผู้ประสานงาน\n(ชื่อผู้ประสานงาน)\n(หน่วยงาน)\n(เบอร์โทร)",pctManual:false,pct:[],
+  sign:[{name:"",pos:"",date:""},{name:"",pos:"หวป-ธ.",date:""},{name:"",pos:"กวย-ธ.",date:""}]
+}}
+function empty(){var s=sample();s.title="";s.planNo="";s.tasks=[blankTask()];s.notes="ผู้ประสานงาน";return s}
+
+var S;
+try{S=JSON.parse(localStorage.getItem(KEY)||"null")}catch(e){S=null}
+if(!S||!Array.isArray(S.tasks)||!S.sign)S=sample();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+
+/* ---------- date helpers (integer day numbers, UTC) ---------- */
+function dnum(s){var m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(s||"");return m?Math.round(Date.UTC(+m[1],+m[2]-1,+m[3])/DAY):null}
+function dparts(n){var d=new Date(n*DAY);return {y:d.getUTCFullYear(),m:d.getUTCMonth(),d:d.getUTCDate()}}
+function thShort(n,noDay){var p=dparts(n);return (noDay?"":p.d+" ")+TH_M[p.m]+" "+String((p.y+543)%100).padStart(2,"0")}
+function num(v){var x=parseFloat(v);return isFinite(x)&&x>0?x:0}
+
+/* ---------- layout model shared by preview and export ---------- */
+function model(){
+  var tasks=S.tasks.map(function(t,i){
+    var s=dnum(t.start),e=dnum(t.end),ok=s!==null&&e!==null&&e>=s;
+    var sums=[0,1,2].map(function(k){return num(t.mh[k][0])*num(t.mh[k][1])*num(t.mh[k][2])});
+    var sums2=[0,1,2].map(function(k){return S.dept2On?num(t.mh2[k][0])*num(t.mh2[k][1])*num(t.mh2[k][2]):0});
+    var cat=[0,1,2].map(function(k){return sums[k]+sums2[k]});
+    return {t:t,i:i,s:s,e:e,ok:ok,days:ok?e-s+1:null,sums:sums,sums2:sums2,cat:cat,total:cat[0]+cat[1]+cat[2]};
+  });
+  var dated=tasks.filter(function(x){return x.ok});
+  var periods=[],mode=S.scale;
+  var now=new Date(),min,max;
+  if(dated.length){min=Math.min.apply(null,dated.map(function(x){return x.s}));max=Math.max.apply(null,dated.map(function(x){return x.e}))}
+  else{min=Math.round(Date.UTC(now.getFullYear(),now.getMonth(),1)/DAY);max=Math.round(Date.UTC(now.getFullYear(),now.getMonth()+3,0)/DAY);if(mode!=="week")mode="month"}
+  if(mode==="auto")mode=(max-min+1)<=62?"week":"month";
+  if(mode==="week"&&Math.ceil((max-min+1)/7)>26)mode="month";
+  if(mode==="week"){for(var a=min;a<=max;a+=7)periods.push({s:a,e:a+7})}
+  else{var p=dparts(min),y=p.y,m=p.m;
+    while(periods.length<60){var a2=Math.round(Date.UTC(y,m,1)/DAY),b2=Math.round(Date.UTC(y,m+1,1)/DAY);if(a2>max)break;periods.push({s:a2,e:b2});m++}}
+  if(!periods.length)periods.push({s:min,e:min+7});
+  function pos(day){ /* x in sub-column units, 4 per period */
+    if(day<=periods[0].s)return 0;
+    for(var i=0;i<periods.length;i++){var q=periods[i];if(day<q.e)return 4*(i+(day-q.s)/(q.e-q.s))}
+    return 4*periods.length}
+  function inv(xv){var p=Math.max(0,Math.min(periods.length-1,Math.floor(xv/4))),q=periods[p];return q.s+(xv/4-p)*(q.e-q.s)}
+  tasks.forEach(function(x){if(x.ok){x.x0=pos(x.s);x.x1=pos(x.e+1)}});
+  var useMH=dated.some(function(x){return x.total>0}),W=0;
+  dated.forEach(function(x){x.w=useMH?x.total:x.days;W+=x.w});
+  var auto=periods.map(function(q){var a=0;
+    dated.forEach(function(x){a+=x.w*Math.min(1,Math.max(0,(q.e-x.s)/(x.e+1-x.s)))});
+    return W?Math.round(a/W*100):null});
+  var pct=periods.map(function(q,i){
+    if(S.pctManual){var v=S.pct[i];return v===""||v==null||!isFinite(+v)?null:+v}
+    return auto[i]});
+  /* form rows: a task's extra name lines continue on following rows */
+  var rows=[],n=0;
+  tasks.forEach(function(x){var lines=String(x.t.name||"").split("\n");
+    if(!String(x.t.name||"").trim()&&x.s===null&&x.e===null&&!x.total)return;n++;
+    rows.push({task:x,no:n,text:lines[0]});
+    for(var j=1;j<lines.length;j++)if(lines[j].trim())rows.push({text:lines[j]})});
+  var notes=String(S.notes||"").split("\n");while(notes.length&&!notes[notes.length-1].trim())notes.pop();
+  var body=Math.max(14,rows.length+2,notes.length);
+  var tot=[0,1,2].map(function(k){return tasks.reduce(function(a,x){return a+x.cat[k]},0)});
+  return {pos:pos,inv:inv,tasks:tasks,dated:dated,periods:periods,mode:mode,pct:pct,auto:auto,rows:rows,notes:notes,body:body,tot:tot,min:dated.length?min:null,max:dated.length?max:null};
+}
+
+/* ---------- form UI ---------- */
+var TOP=["title","planNo","pmOrder","dept","division","bureau","dept2","notes","scale"];
+function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function fillTop(){
+  TOP.forEach(function(k){$(k).value=S[k]||(k==="scale"?"auto":"")});
+  $("dept2On").checked=!!S.dept2On;$("pctManual").checked=!!S.pctManual;$("dept2Wrap").hidden=!S.dept2On;
+  S.sign.forEach(function(g,i){$("s"+i+"name").value=g.name||"";$("s"+i+"pos").value=g.pos||"";$("s"+i+"date").value=g.date||""});
+}
+function mhBlock(i,key,label){
+  var t=S.tasks[i],h='<div class="mh-title" data-lab="'+key+'">'+esc(label)+'</div><div class="mh">';
+  CATS.forEach(function(c,k){
+    h+='<div class="mh-g"><b>'+c+' <output id="t'+i+key+k+'sum"></output></b><div class="mh-r">';
+    ["คน","วัน","ชม./วัน"].forEach(function(l,j){
+      h+='<label>'+l+'<input type="number" min="0" step="any" inputmode="decimal" id="t'+i+key+k+j+'" data-i="'+i+'" data-k="'+key+'" data-c="'+k+'" data-j="'+j+'" value="'+esc(t[key][k][j])+'"></label>'});
+    h+='</div></div>'});
+  return h+'</div>';
+}
+function mhLabel(key){return "Man-Hour แผนก "+(key==="mh"?(S.dept||""):(S.dept2||"ที่ร่วมงาน"))}
+function renderTasks(){
+  var h="";
+  S.tasks.forEach(function(t,i){
+    h+='<div class="task"><div class="task-head"><span class="num">'+(i+1)+'</span><span class="sum" id="t'+i+'info"></span>'+
+     '<span class="tools"><button type="button" class="icon" data-act="up" data-i="'+i+'" aria-label="เลื่อนขึ้น"'+(i?'':' disabled')+'>↑</button>'+
+     '<button type="button" class="icon" data-act="down" data-i="'+i+'" aria-label="เลื่อนลง"'+(i<S.tasks.length-1?'':' disabled')+'>↓</button>'+
+     '<button type="button" class="icon" data-act="dup" data-i="'+i+'">ทำซ้ำ</button>'+
+     '<button type="button" class="icon" data-act="del" data-i="'+i+'">ลบ</button></span></div>'+
+     '<div class="grid">'+
+     '<label class="f s6"><span>รายการ</span><textarea rows="1" id="t'+i+'name" data-i="'+i+'" data-f="name">'+esc(t.name)+'</textarea></label>'+
+     '<label class="f s3"><span>วันเริ่มงาน</span><input type="date" id="t'+i+'start" data-i="'+i+'" data-f="start" value="'+esc(t.start)+'"></label>'+
+     '<label class="f s3"><span>วันเสร็จงาน</span><input type="date" id="t'+i+'end" data-i="'+i+'" data-f="end" value="'+esc(t.end)+'"></label>'+
+     '<label class="f s6"><span>ผู้รับผิดชอบ</span><input type="text" id="t'+i+'resp" data-i="'+i+'" data-f="resp" value="'+esc(t.resp)+'"></label>'+
+     '<label class="f s6"><span>เครื่องมือ-อุปกรณ์ และวัสดุ</span><input type="text" id="t'+i+'tools" data-i="'+i+'" data-f="tools" value="'+esc(t.tools)+'"></label>'+
+     '</div>'+mhBlock(i,"mh",mhLabel("mh"))+(S.dept2On?mhBlock(i,"mh2",mhLabel("mh2")):"")+'</div>'});
+  $("tasks").innerHTML=h;
+}
+function renderPcts(M){
+  var box=$("pcts"),h="";
+  M.periods.forEach(function(q,i){
+    var v=S.pctManual?(S.pct[i]==null?"":S.pct[i]):(M.auto[i]==null?"":M.auto[i]);
+    h+='<label>'+thShort(q.s,M.mode==="month")+'<input type="number" min="0" max="100" id="pct'+i+'" data-p="'+i+'" value="'+esc(v)+'"'+(S.pctManual?'':' disabled')+'></label>'});
+  if(box.dataset.sig!==h){box.innerHTML=h;box.dataset.sig=h}
+}
+function fmt(n){return n?String(Math.round(n*100)/100):"0"}
+function refresh(){
+  var M=model(),warn=[];
+  M.tasks.forEach(function(x){
+    var i=x.i;
+    ["mh","mh2"].forEach(function(key){if(key==="mh2"&&!S.dept2On)return;
+      [0,1,2].forEach(function(k){var o=$("t"+i+key+k+"sum");if(o)o.textContent=fmt((key==="mh"?x.sums:x.sums2)[k])+" ชม."})});
+    var info=$("t"+i+"info");if(info)info.textContent=(x.days?x.days+" วัน · ":"")+"รวม "+fmt(x.total)+" Man-Hour";
+    var bad=x.s!==null&&x.e!==null&&x.e<x.s,en=$("t"+i+"end");if(en)en.classList.toggle("bad",bad);
+    if(bad)warn.push("รายการที่ "+(i+1)+": วันเสร็จงานอยู่ก่อนวันเริ่มงาน");
+    else if(!x.ok&&(x.t.name||"").trim())warn.push("รายการที่ "+(i+1)+": ยังไม่ได้ใส่วันเริ่ม/วันเสร็จ จึงไม่มีแถบ Gantt");
+  });
+  $("warn").innerHTML=warn.map(function(w){return "<li>"+esc(w)+"</li>"}).join("");
+  lastM=M;renderPcts(M);renderPaper(M);save();
+}
+var lastM=null,drag=null;
+function iso(n){return new Date(n*DAY).toISOString().slice(0,10)}
+function edgeOf(bar,cx){var r=bar.getBoundingClientRect(),m=Math.min(7,r.width/3);return cx-r.left<m?"l":r.right-cx<m?"r":"m"}
+
+/* ---------- paper preview ---------- */
+function signDate(d){var n=dnum(d);if(n===null)return "วันที่ .............. / .............. / ..............";
+  var p=dparts(n);return "วันที่....."+p.d+"......../....."+TH_M[p.m]+"......../......"+String((p.y+543)%100).padStart(2,"0")+".........."}
+function renderPaper(M){
+  var P=M.periods.length,G=4*P,h="";
+  h+='<h3>แผนงาน <span>'+esc(S.title)+'</span></h3>';
+  h+='<h4>แผนก <span>.....'+esc(S.dept)+'..........</span> กอง <span>...........'+esc(S.division)+'..........</span> &nbsp; '+esc(S.bureau)+'</h4>';
+  h+='<div class="right">'+(S.pmOrder?'PM-Order '+esc(S.pmOrder)+' &nbsp; ':'')+(S.planNo?'งานตามแผนลำดับที่ '+esc(S.planNo):'')+'</div>';
+  var gw=Math.max(18,Math.min(30,Math.round(64/P*4)/4));
+  h+='<table><colgroup><col style="width:3.5%"><col style="width:17%"><col style="width:6%"><col style="width:6%"><col style="width:3%"><col style="width:5%"><col style="width:5%"><col style="width:4.5%"><col style="width:4.5%">';
+  for(var i=0;i<P;i++)h+='<col style="width:'+(gw/P)+'%">';
+  h+='<col><col><col></colgroup><thead><tr><th rowspan="3">ลำดับที่</th><th rowspan="3">รายการ</th><th rowspan="3">วันเริ่มงาน</th><th rowspan="3">วันเสร็จงาน</th><th rowspan="3">วัน</th><th colspan="4">Man-Hour <sup>( 3 )</sup></th><th colspan="'+P+'" rowspan="2">เปอร์เซ็นท์ของแผนงาน</th><th rowspan="3">ผู้รับผิดชอบ</th><th rowspan="3">เครื่องมือ-อุปกรณ์ และวัสดุ</th><th rowspan="3">หมายเหตุ</th></tr>';
+  h+='<tr><th colspan="3">ประเภทคนงาน</th><th rowspan="2">รวม</th></tr><tr><th>Supervisor</th><th>Foreman</th><th>Skill</th>';
+  M.periods.forEach(function(q){h+='<th>'+thShort(q.s,M.mode==="month")+'</th>'});
+  h+='</tr></thead><tbody>';
+  var grid="repeating-linear-gradient(to right,transparent 0,transparent calc("+(100/G)+"% - 1px),rgba(0,0,0,.28) calc("+(100/G)+"% - 1px),rgba(0,0,0,.28) "+(100/G)+"%)";
+  for(var r=0;r<M.body;r++){
+    var R=M.rows[r]||{},x=R.task;
+    h+='<tr><td>'+(R.no||"")+'</td><td class="l">'+esc(R.text||"")+'</td>';
+    if(x){h+='<td>'+(x.s!==null?thShort(x.s):"")+'</td><td>'+(x.e!==null?thShort(x.e):"")+'</td><td>'+(x.days||"")+'</td><td>'+fmt(x.cat[0])+'</td><td>'+fmt(x.cat[1])+'</td><td>'+fmt(x.cat[2])+'</td><td>'+fmt(x.total)+'</td>'}
+    else h+='<td></td><td></td><td></td><td></td><td></td><td></td><td></td>';
+    h+='<td class="g" colspan="'+P+'" style="background-image:'+grid+'">'+(x&&x.ok?'<i data-i="'+x.i+'" title="ลากเพื่อเลื่อนช่วงเวลา" style="left:'+(x.x0/G*100)+'%;width:'+((x.x1-x.x0)/G*100)+'%"></i>':'')+'</td>';
+    h+='<td>'+(x?esc(x.t.resp):"")+'</td><td>'+(x?esc(x.t.tools):"")+'</td><td class="l">'+esc(M.notes[r]||"")+'</td></tr>';
+  }
+  h+='</tbody><tbody><tr class="tot"><td></td><td></td><td>'+(M.min!==null?thShort(M.min):"")+'</td><td>'+(M.max!==null?thShort(M.max):"")+'</td><td>รวม</td><td>'+fmt(M.tot[0])+'</td><td>'+fmt(M.tot[1])+'</td><td>'+fmt(M.tot[2])+'</td><td>'+fmt(M.tot[0]+M.tot[1]+M.tot[2])+'</td>';
+  M.pct.forEach(function(v){h+='<td>'+(v==null?"":v+"%")+'</td>'});
+  h+='<td></td><td></td><td></td></tr></tbody></table>';
+  var roles=["ผู้จัดทำ","เห็นชอบ ( 1 )","อนุมัติ ( 2 )"];
+  h+='<div class="signs">'+S.sign.map(function(g,i){return '<div><span>............................................ '+roles[i]+'</span><span>( '+esc(g.name||" ".repeat(30))+' )</span><span>'+esc(g.pos)+'</span><span>'+signDate(g.date)+'</span></div>'}).join("")+'</div>';
+  h+='<div class="foot"><span>รองผู้ว่าการธุรกิจเกี่ยวเนื่อง</span><span>รหัสเอกสาร FM-008/WI-CMD-MS-001</span><span>แก้ไขครั้งที่ 03</span></div>';
+  $("paper").innerHTML=h;
+}
+
+/* ---------- XLSX export: rebuilds the original sheet cell-for-cell from the template's style grid ---------- */
+function colName(c){var s="";while(c>0){var m=(c-1)%26;s=String.fromCharCode(65+m)+s;c=(c-m-1)/26}return s}
+function xesc(s){return String(s==null?"":s).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g,"").replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function T(s){return '<t xml:space="preserve">'+xesc(s)+'</t>'}
+function run(s,pr){return '<r>'+(pr?'<rPr>'+pr+'</rPr>':'')+T(s)+'</r>'}
+var FONT='<rFont val="TH Sarabun New"/><family val="2"/>';
+
+function buildXlsx(M){
+  var P=M.periods.length,G=4*P,B=M.body,TOT=8+B,LAST=TOT+12;
+  var cResp=11+G,cTools=12+G,cNote=13+G,b1=16+G,b2=30+G,lastCol=b2+12;
+  function tplCol(r,c){
+    if(c<=10)return c;
+    if(c<11+G){var g=c-11;return (r===5||r===6)?(g===0?11:12):11+g%4}
+    return c-G+16}
+  function tplRow(r,c){
+    if(r<=7)return r;if(r>=TOT)return r-TOT+22;
+    var i=r-8;if(i===B-1)return 21;if(i===B-2)return 20;
+    if(c<=10){if(i===0)return 8;var R=M.rows[i];return R?(R.task?9:11):13}
+    if(c<11+G)return 13;
+    return i===0?8:9}
+  function style(r,c){var row=TPL.grid[tplRow(r,c)-1];return row?row[tplCol(r,c)-1]:-1}
+  var cells={},merges=[];
+  function put(r,c,o){cells[r+","+c]=o}
+  function str(r,c,s){if(s!==""&&s!=null)put(r,c,{is:T(s)})}
+  function rich(r,c,x){put(r,c,{is:x})}
+  function numv(r,c,v,s){put(r,c,{v:v,s:s})}
+  function fx(r,c,f,v,s){put(r,c,{f:f,v:v,s:s})}
+  function mg(r1,c1,r2,c2){merges.push(colName(c1)+r1+":"+colName(c2)+r2)}
+  var A=function(c,r){return colName(c)+r};
+
+  /* heading */
+  rich(2,1,run("แผนงาน")+run("  "+(S.title||""),'<b/><sz val="28"/><color rgb="FF0070C0"/>'+FONT));mg(2,1,2,cNote);
+  var bl='<b/><sz val="22"/><color rgb="FF0000FF"/>'+FONT,bk='<b/><sz val="22"/>'+FONT;
+  rich(3,1,run("แผนก ")+run("....."+(S.dept||"")+"..........",bl)+run(" กอง ",bk)+run("..........."+(S.division||"")+"..........",bl)+run("     "+(S.bureau||""),bk));mg(3,1,3,cNote);
+  if(S.planNo)str(4,cNote,"งานตามแผนลำดับที่ "+S.planNo);
+  str(5,1,"ลำดับที่");mg(5,1,7,1);str(5,2,"รายการ");mg(5,2,7,3);str(5,4,"วันเริ่มงาน");mg(5,4,7,4);str(5,5,"วันเสร็จงาน");mg(5,5,7,5);
+  str(5,6,"ระยะเวลา (วัน)");mg(5,6,7,6);
+  rich(5,7,run("Man-Hour ")+run("( 3 )",'<b/><vertAlign val="superscript"/><sz val="20"/>'+FONT));mg(5,7,5,10);
+  str(6,7,"ประเภทคนงาน");mg(6,7,6,9);str(6,10,"รวม");mg(6,10,7,10);
+  str(7,7,"Supervisor");str(7,8,"Foreman");str(7,9,"Skill");
+  str(5,11,"เปอร์เซ็นท์ของแผนงาน");mg(5,11,6,10+G);
+  str(5,cResp,"ผู้รับผิดชอบ");mg(5,cResp,7,cResp);str(5,cTools,"เครื่องมือ-อุปกรณ์ และวัสดุ");mg(5,cTools,7,cTools);str(5,cNote,"หมายเหตุ");mg(5,cNote,7,cNote);
+  M.periods.forEach(function(q,p){var c=11+4*p;
+    numv(7,c,q.s+25569,M.mode==="month"?TPL.monthXf:undefined);mg(7,c,7,c+3);
+    if(M.pct[p]!=null)numv(TOT,c,M.pct[p]/100);mg(TOT,c,TOT,c+3)});
+
+  /* man-hour working tables to the right of the print area */
+  [[b1,"แผนงานแผนก "+(S.dept||"")],[b2,"แผนงานแผนก "+(S.dept2On&&S.dept2?S.dept2:"-")]].forEach(function(b){
+    var c0=b[0];str(5,c0+1,b[1]);str(6,c0,"ลำดับที่");
+    ["Supervisor","Foreman","Skill (ชำนาญการ)"].forEach(function(n,k){var c=c0+1+4*k;str(6,c,n);mg(6,c,6,c+3);
+      ["man","day","hour/day","sum"].forEach(function(l,j){str(7,c+j,l)});
+      mg(TOT-2,c,TOT-2,c+3)});
+    mg(TOT-1,c0+1,TOT-1,c0+12)});
+  var blockTot=[[0,0,0],[0,0,0]];
+  for(var i=0;i<B;i++){
+    var r=8+i,R=M.rows[i];mg(r,2,r,3);
+    if(M.notes[i])str(r,cNote,M.notes[i]);
+    if(!R)continue;
+    str(r,2,R.text);
+    var x=R.task;if(!x)continue;
+    numv(r,1,R.no);numv(r,b1,R.no);numv(r,b2,R.no);
+    if(x.s!==null)numv(r,4,x.s+25569);if(x.e!==null)numv(r,5,x.e+25569);
+    if(x.ok)fx(r,6,A(5,r)+"-"+A(4,r)+"+1",x.days);
+    str(r,cResp,x.t.resp);str(r,cTools,x.t.tools);
+    [[b1,x.t.mh,x.sums,true],[b2,x.t.mh2,x.sums2,S.dept2On]].forEach(function(b,bi){
+      for(var k=0;k<3;k++){var c=b[0]+1+4*k;
+        if(b[3])for(var j=0;j<3;j++){var v=num(b[1][k][j]);if(v&&(j<2||num(b[1][k][0])||num(b[1][k][1])))numv(r,c+j,v)}
+        fx(r,c+3,A(c+2,r)+"*"+A(c+1,r)+"*"+A(c,r),b[2][k]);blockTot[bi][k]+=b[2][k]}});
+    for(var k2=0;k2<3;k2++)fx(r,7+k2,A(b1+4+4*k2,r)+"+"+A(b2+4+4*k2,r),x.cat[k2]);
+    fx(r,10,"SUM("+A(7,r)+":"+A(9,r)+")",x.total);
+  }
+  [b1,b2].forEach(function(c0,bi){var parts=[];
+    for(var k=0;k<3;k++){var c=c0+1+4*k;fx(TOT-2,c,"SUM("+A(c+3,7)+":"+A(c+3,TOT-3)+")",blockTot[bi][k]);parts.push(A(c,TOT-2))}
+    fx(TOT-1,c0+1,parts.join("+"),blockTot[bi][0]+blockTot[bi][1]+blockTot[bi][2])});
+
+  /* totals row */
+  if(M.min!==null){fx(TOT,4,"MIN("+A(4,8)+":"+A(4,TOT-1)+")",M.min+25569);fx(TOT,5,"MAX("+A(5,8)+":"+A(5,TOT-1)+")",M.max+25569)}
+  str(TOT,6,"รวม");
+  for(var k3=0;k3<3;k3++)fx(TOT,7+k3,"SUM("+A(7+k3,8)+":"+A(7+k3,TOT-1)+")",M.tot[k3]);
+  fx(TOT,10,"SUM("+A(10,8)+":"+A(10,TOT-1)+")",M.tot[0]+M.tot[1]+M.tot[2]);
+
+  /* sign-off block and footer */
+  var sr=TOT+2,g=S.sign;
+  str(sr+4,2,"หมายเหตุ : ");str(sr+4,3,"แบบฟอร์มแผนงานนี้ใช้วางแผนทั้งงานสำนักงานและงานสนาม");
+  str(sr+5,3,"( 1 )   หัวหน้าแผนก หรือเทียบเท่า");str(sr+6,3,"( 2 )   หัวหน้ากอง หรือเทียบเท่า");str(sr+7,3,"( 3 )   สำหรับใช้อ้างอิงภายในหน่วยงาน");
+  str(sr+8,3,"( 4 )   หน่วยงานที่จัดทำแผนงานสามารถปรับเปลี่ยนได้ตามลักษณะงาน และความต้องการแสดงรายละเอียดต่างๆ");
+  str(LAST,1,"รองผู้ว่าการธุรกิจเกี่ยวเนื่อง");mg(LAST,1,LAST,5);str(LAST,6,"รหัสเอกสาร  FM-008/WI-CMD-MS-001");mg(LAST,6,LAST,10+G);
+  str(LAST,cResp,"แก้ไขครั้งที่ 03");mg(LAST,cResp,LAST,cNote);
+
+  /* sheet xml */
+  var sd="";
+  for(var r2=1;r2<=LAST;r2++){
+    var tr=tplRow(r2,1),ra=TPL.rows[tr-1],cs="";
+    for(var c2=1;c2<=lastCol;c2++){
+      var o=cells[r2+","+c2],s=o&&o.s!==undefined?o.s:style(r2,c2);
+      if(!o&&s<0)continue;
+      var a='<c r="'+colName(c2)+r2+'"'+(s>=0?' s="'+s+'"':'');
+      if(!o)cs+=a+'/>';
+      else if(o.is)cs+=a+' t="inlineStr"><is>'+o.is+'</is></c>';
+      else if(o.f)cs+=a+'><f>'+xesc(o.f)+'</f><v>'+o.v+'</v></c>';
+      else cs+=a+'><v>'+o.v+'</v></c>';
+    }
+    sd+='<row r="'+r2+'" ht="'+ra[0]+'" customHeight="1"'+(ra[1]>=0?' s="'+ra[1]+'" customFormat="1"':'')+(cs?'>'+cs+'</row>':'/>');
+  }
+  var W=[7.5703125,13.7109375,37.42578125,12.85546875,14,5.7109375,11.85546875,10.7109375,10.7109375,9.42578125];
+  var cols=W.map(function(w,i){return '<col min="'+(i+1)+'" max="'+(i+1)+'" width="'+w+'" style="1" customWidth="1"/>'}).join("")+
+    '<col min="11" max="'+(10+G)+'" width="2.7109375" style="1" customWidth="1"/>'+
+    '<col min="'+cResp+'" max="'+cResp+'" width="37.85546875" style="1" customWidth="1"/><col min="'+cTools+'" max="'+cTools+'" width="37" style="1" customWidth="1"/>'+
+    '<col min="'+cNote+'" max="'+cNote+'" width="38.140625" style="1" customWidth="1"/><col min="'+(cNote+1)+'" max="'+(cNote+1)+'" width="13.28515625" style="1" customWidth="1"/>'+
+    '<col min="'+(cNote+2)+'" max="'+(lastCol+20)+'" width="9.140625" style="1" customWidth="1"/>';
+  var NS='xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"';
+  var HEAD='<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n';
+  var sheet=HEAD+'<worksheet '+NS+'><sheetPr><pageSetUpPr fitToPage="1"/></sheetPr><dimension ref="A1:'+colName(lastCol)+LAST+'"/>'+
+    '<sheetViews><sheetView tabSelected="1" view="pageBreakPreview" zoomScale="80" zoomScaleNormal="40" zoomScaleSheetLayoutView="80" workbookViewId="0"><pane xSplit="10" ySplit="7" topLeftCell="K8" activePane="bottomRight" state="frozen"/><selection pane="topRight"/><selection pane="bottomLeft"/><selection pane="bottomRight" activeCell="K8" sqref="K8"/></sheetView></sheetViews>'+
+    '<sheetFormatPr defaultRowHeight="24"/><cols>'+cols+'</cols><sheetData>'+sd+'</sheetData>'+
+    '<mergeCells count="'+merges.length+'">'+merges.map(function(m){return '<mergeCell ref="'+m+'"/>'}).join("")+'</mergeCells>'+
+    '<printOptions horizontalCentered="1"/><pageMargins left="0.39374999999999999" right="0.39374999999999999" top="0.39374999999999999" bottom="0.196527777777778" header="0.51180555555555496" footer="0.51180555555555496"/>'+
+    '<pageSetup paperSize="9" firstPageNumber="0" fitToHeight="1" orientation="landscape"/><drawing r:id="rId1"/></worksheet>';
+
+  /* drawing: logo, PM-Order label, Gantt bars (drawn rectangles as in the original) */
+  var XD='xmlns:xdr="http://schemas.openxmlformats.org/drawingml/2006/spreadsheetDrawing" xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"';
+  function anchor(c1,o1,r1,p1,c2,o2,r2,p2,attr){return '<xdr:twoCellAnchor'+(attr||'')+'><xdr:from><xdr:col>'+c1+'</xdr:col><xdr:colOff>'+o1+'</xdr:colOff><xdr:row>'+r1+'</xdr:row><xdr:rowOff>'+p1+'</xdr:rowOff></xdr:from><xdr:to><xdr:col>'+c2+'</xdr:col><xdr:colOff>'+o2+'</xdr:colOff><xdr:row>'+r2+'</xdr:row><xdr:rowOff>'+p2+'</xdr:rowOff></xdr:to>'}
+  var t0=cTools-1,n0=cNote-1,id=2;
+  var dr=HEAD+'<xdr:wsDr '+XD+'>'+
+    anchor(t0,1991160,1,374400,n0,1029240,2,235800,' editAs="oneCell"')+'<xdr:sp macro="" textlink=""><xdr:nvSpPr><xdr:cNvPr id="'+(id++)+'" name="PM-Order"/><xdr:cNvSpPr/></xdr:nvSpPr><xdr:spPr><a:xfrm><a:off x="0" y="629640"/><a:ext cx="1433880" cy="425160"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom><a:noFill/><a:ln><a:noFill/></a:ln></xdr:spPr><xdr:txBody><a:bodyPr lIns="18000" tIns="46800" rIns="0" bIns="0"><a:noAutofit/></a:bodyPr><a:lstStyle/><a:p><a:pPr algn="r"/><a:r><a:rPr lang="en-US" sz="1400" b="1"><a:solidFill><a:srgbClr val="000000"/></a:solidFill><a:latin typeface="TH SarabunPSK"/><a:cs typeface="TH SarabunPSK"/></a:rPr><a:t>PM-Order '+xesc(S.pmOrder||"................")+'</a:t></a:r></a:p></xdr:txBody></xdr:sp><xdr:clientData/></xdr:twoCellAnchor>'+
+    anchor(t0,1763581,0,0,n0,1599482,1,466529,' editAs="oneCell"')+'<xdr:pic><xdr:nvPicPr><xdr:cNvPr id="'+(id++)+'" name="Logo"/><xdr:cNvPicPr><a:picLocks noChangeAspect="1"/></xdr:cNvPicPr></xdr:nvPicPr><xdr:blipFill><a:blip xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" r:embed="rId1"/><a:stretch><a:fillRect/></a:stretch></xdr:blipFill><xdr:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="2298024" cy="718133"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></xdr:spPr></xdr:pic><xdr:clientData/></xdr:twoCellAnchor>';
+  var CW=180975;
+  function at(xv){var c=Math.floor(xv);if(c>=G)return [10+G-1,CW];return [10+c,Math.round((xv-c)*CW)]}
+  M.rows.forEach(function(R,i){var x=R.task;if(!x||!x.ok)return;
+    var a=at(x.x0),b=at(x.x1),r=7+i;
+    dr+=anchor(a[0],a[1],r,136754,b[0],b[1],r,214314)+'<xdr:sp macro="" textlink=""><xdr:nvSpPr><xdr:cNvPr id="'+(id++)+'" name="Bar '+(i+1)+'"/><xdr:cNvSpPr/></xdr:nvSpPr><xdr:spPr bwMode="auto"><a:xfrm><a:off x="0" y="0"/><a:ext cx="'+Math.max(1,Math.round((x.x1-x.x0)*CW))+'" cy="77560"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom><a:solidFill><a:schemeClr val="tx1"/></a:solidFill><a:ln w="9525" cap="flat" cmpd="sng" algn="ctr"><a:solidFill><a:srgbClr val="000000"/></a:solidFill><a:prstDash val="solid"/><a:round/></a:ln></xdr:spPr><xdr:txBody><a:bodyPr vertOverflow="clip" wrap="square" lIns="18288" tIns="0" rIns="0" bIns="0" rtlCol="0" anchor="ctr" upright="1"/><a:lstStyle/><a:p><a:pPr algn="ctr"/><a:endParaRPr lang="th-TH" sz="1100"/></a:p></xdr:txBody></xdr:sp><xdr:clientData/></xdr:twoCellAnchor>'});
+  /* sign-off blocks: text boxes at fixed page positions (left / centre / right), not tied to cell widths */
+  var cw=[];for(var ci=1;ci<=cNote;ci++)cw.push(Math.round((ci<=10?W[ci-1]:ci<11+G?2.7109375:ci===cResp?37.85546875:ci===cTools?37:38.140625)*7)*9525);
+  var pageW=cw.reduce(function(a,b){return a+b},0),boxW=4700000;
+  function colAt(xe){var c=0;while(c<cw.length-1&&xe>=cw[c]){xe-=cw[c];c++}return [c,Math.max(0,Math.round(xe))]}
+  var sz=' lang="th-TH" sz="1800"',fnt='<a:solidFill><a:srgbClr val="000000"/></a:solidFill><a:latin typeface="TH Sarabun New"/><a:cs typeface="TH Sarabun New"/>';
+  function para(runs){return '<a:p><a:pPr algn="ctr"><a:lnSpc><a:spcPts val="3000"/></a:lnSpc></a:pPr>'+runs+'</a:p>'}
+  function rn(t,extra){return '<a:r><a:rPr'+sz+(extra||'')+'>'+fnt+'</a:rPr><a:t>'+xesc(t)+'</a:t></a:r>'}
+  var dots="............................................................ ";
+  [[dots+"ผู้จัดทำ",""],[dots+"เห็นชอบ ","( 1 )"],[dots+"อนุมัติ ","( 2 )"]].forEach(function(lab,k){
+    var x0=Math.round(pageW*(2*k+1)/6-boxW/2),a=colAt(x0),b=colAt(x0+boxW);
+    dr+=anchor(a[0],a[1],sr-1,0,b[0],b[1],sr+3,0,' editAs="absolute"')+'<xdr:sp macro="" textlink=""><xdr:nvSpPr><xdr:cNvPr id="'+(id++)+'" name="Sign '+(k+1)+'"/><xdr:cNvSpPr txBox="1"/></xdr:nvSpPr><xdr:spPr><a:xfrm><a:off x="'+x0+'" y="0"/><a:ext cx="'+boxW+'" cy="1524000"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom><a:noFill/><a:ln><a:noFill/></a:ln></xdr:spPr><xdr:txBody><a:bodyPr vertOverflow="clip" horzOverflow="clip" wrap="square" lIns="0" tIns="0" rIns="0" bIns="0" rtlCol="0" anchor="t"><a:noAutofit/></a:bodyPr><a:lstStyle/>'+
+      para(rn(lab[0],' b="1"')+(lab[1]?rn(lab[1],' b="1" baseline="30000"'):''))+para(rn("( "+(g[k].name||"                                        ")+" )"))+para(rn(g[k].pos||" "))+para(rn(signDate(g[k].date)))+'</xdr:txBody></xdr:sp><xdr:clientData/></xdr:twoCellAnchor>'});
+  dr+='</xdr:wsDr>';
+
+  var REL='<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">',RT='http://schemas.openxmlformats.org/officeDocument/2006/relationships/';
+  var area="'BB-H04'!$A$1:$"+colName(cNote)+"$"+LAST;
+  var files=[
+   ["[Content_Types].xml",HEAD+'<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="png" ContentType="image/png"/><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/theme/theme1.xml" ContentType="application/vnd.openxmlformats-officedocument.theme+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/><Override PartName="/xl/drawings/drawing1.xml" ContentType="application/vnd.openxmlformats-officedocument.drawing+xml"/></Types>'],
+   ["_rels/.rels",HEAD+REL+'<Relationship Id="rId1" Type="'+RT+'officeDocument" Target="xl/workbook.xml"/></Relationships>'],
+   ["xl/workbook.xml",HEAD+'<workbook '+NS+'><workbookPr defaultThemeVersion="166925"/><bookViews><workbookView showVerticalScroll="0" xWindow="-120" yWindow="-120" windowWidth="29040" windowHeight="15720" tabRatio="500"/></bookViews><sheets><sheet name="BB-H04" sheetId="1" r:id="rId1"/></sheets><definedNames><definedName name="_xlnm.Print_Area" localSheetId="0">'+area+'</definedName></definedNames><calcPr calcId="191029" fullCalcOnLoad="1"/></workbook>'],
+   ["xl/_rels/workbook.xml.rels",HEAD+REL+'<Relationship Id="rId1" Type="'+RT+'worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="'+RT+'theme" Target="theme/theme1.xml"/><Relationship Id="rId3" Type="'+RT+'styles" Target="styles.xml"/></Relationships>'],
+   ["xl/styles.xml",TPL.styles],["xl/theme/theme1.xml",TPL.theme],
+   ["xl/worksheets/sheet1.xml",sheet],
+   ["xl/worksheets/_rels/sheet1.xml.rels",HEAD+REL+'<Relationship Id="rId1" Type="'+RT+'drawing" Target="../drawings/drawing1.xml"/></Relationships>'],
+   ["xl/drawings/drawing1.xml",dr],
+   ["xl/drawings/_rels/drawing1.xml.rels",HEAD+REL+'<Relationship Id="rId1" Type="'+RT+'image" Target="../media/image1.png"/></Relationships>'],
+   ["xl/media/image1.png",b64(TPL.logo)]
+  ];
+  return zip(files);
+}
+function b64(s){var b=atob(s),u=new Uint8Array(b.length);for(var i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return u}
+
+/* ---------- minimal ZIP writer (stored entries) ---------- */
+var CRC=(function(){var t=new Uint32Array(256);for(var n=0;n<256;n++){var c=n;for(var k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0}return t})();
+function crc32(u){var c=0xFFFFFFFF;for(var i=0;i<u.length;i++)c=CRC[(c^u[i])&255]^(c>>>8);return (c^0xFFFFFFFF)>>>0}
+function zip(files){
+  var enc=new TextEncoder(),parts=[],cd=[],off=0;
+  files.forEach(function(f){
+    var name=enc.encode(f[0]),data=typeof f[1]==="string"?enc.encode(f[1]):f[1],crc=crc32(data);
+    var h=new DataView(new ArrayBuffer(30));
+    h.setUint32(0,0x04034b50,true);h.setUint16(4,20,true);h.setUint16(6,0x0800,true);h.setUint16(8,0,true);h.setUint16(10,0,true);h.setUint16(12,0x21,true);
+    h.setUint32(14,crc,true);h.setUint32(18,data.length,true);h.setUint32(22,data.length,true);h.setUint16(26,name.length,true);h.setUint16(28,0,true);
+    parts.push(new Uint8Array(h.buffer),name,data);
+    var c=new DataView(new ArrayBuffer(46));
+    c.setUint32(0,0x02014b50,true);c.setUint16(4,20,true);c.setUint16(6,20,true);c.setUint16(8,0x0800,true);c.setUint16(10,0,true);c.setUint16(12,0,true);c.setUint16(14,0x21,true);
+    c.setUint32(16,crc,true);c.setUint32(20,data.length,true);c.setUint32(24,data.length,true);c.setUint16(28,name.length,true);c.setUint32(42,off,true);
+    cd.push(new Uint8Array(c.buffer),name);off+=30+name.length+data.length});
+  var cdLen=cd.reduce(function(a,x){return a+x.length},0),e=new DataView(new ArrayBuffer(22));
+  e.setUint32(0,0x06054b50,true);e.setUint16(8,files.length,true);e.setUint16(10,files.length,true);e.setUint32(12,cdLen,true);e.setUint32(16,off,true);
+  return new Blob(parts.concat(cd,[new Uint8Array(e.buffer)]),{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"});
+}
+
+/* ---------- export action ---------- */
+function say(t,cls){var m=$("msg");m.textContent=t;m.className=cls||""}
+async function doExport(){
+  var blob;
+  try{blob=buildXlsx(model())}catch(e){say("สร้างไฟล์ไม่สำเร็จ: "+e.message,"err");return}
+  var safe=String(S.title||"").replace(/[\\/:*?"<>|\n\r]+/g," ").trim().slice(0,60);
+  var name="FM-008-WI-CMD-MS-001_RV.03 แผนงาน"+(safe?" "+safe:"")+".xlsx";
+  var dl=null;
+  try{if(window.claude&&window.claude.use)dl=await window.claude.use("downloads")}catch(e){dl=null}
+  if(dl){
+    try{await dl.save({filename:name,data:blob});say("บันทึกไฟล์ "+name+" แล้ว","ok")}
+    catch(e){say(e&&e.code==="declined"?"ยกเลิกการบันทึกไฟล์":"บันทึกไฟล์ไม่ได้ในหน้านี้ ("+((e&&e.code)||"unavailable")+") ลองเปิดหน้านี้ใน claude.ai หรือใช้ไฟล์ HTML ที่ดาวน์โหลดไว้","err")}
+    return}
+  try{var a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();
+    setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},2000);say("ส่งออกไฟล์ "+name+" แล้ว","ok")}
+  catch(e){say("เบราว์เซอร์นี้ดาวน์โหลดไฟล์ไม่ได้","err")}
+}
+
+/* ---------- events ---------- */
+function rebuild(){fillTop();renderTasks();refresh()}
+document.addEventListener("input",function(ev){
+  var el=ev.target,d=el.dataset;
+  if(d.f){S.tasks[+d.i][d.f]=el.value}
+  else if(d.k){S.tasks[+d.i][d.k][+d.c][+d.j]=el.value}
+  else if(d.p!==undefined){S.pct[+d.p]=el.value}
+  else if(TOP.indexOf(el.id)>=0){S[el.id]=el.value;
+    if(el.id==="dept"||el.id==="dept2")document.querySelectorAll(".mh-title").forEach(function(n){n.textContent=mhLabel(n.dataset.lab)})}
+  else if(/^s[012](name|pos|date)$/.test(el.id)){S.sign[+el.id[1]][el.id.slice(2)]=el.value}
+  else return;
+  refresh();
+});
+document.addEventListener("change",function(ev){
+  var el=ev.target;
+  if(el.id==="dept2On"){S.dept2On=el.checked;rebuild()}
+  else if(el.id==="pctManual"){S.pctManual=el.checked;if(el.checked)S.pct=model().auto.map(function(v){return v==null?"":v});$("pcts").dataset.sig="";refresh()}
+});
+$("tasks").addEventListener("click",function(ev){
+  var b=ev.target.closest("button[data-act]");if(!b)return;
+  var i=+b.dataset.i,a=b.dataset.act,t=S.tasks;
+  if(a==="del"){t.splice(i,1);if(!t.length)t.push(blankTask())}
+  else if(a==="dup")t.splice(i+1,0,JSON.parse(JSON.stringify(t[i])));
+  else if(a==="up"&&i>0)t.splice(i-1,0,t.splice(i,1)[0]);
+  else if(a==="down"&&i<t.length-1)t.splice(i+1,0,t.splice(i,1)[0]);
+  renderTasks();refresh();
+});
+/* drag Gantt bars in the preview: middle moves the whole range, ends change start / finish */
+$("paper").addEventListener("pointerdown",function(ev){
+  var bar=ev.target.closest("i[data-i]");if(!bar||!lastM)return;
+  var x=lastM.tasks[+bar.dataset.i];if(!x||!x.ok)return;
+  ev.preventDefault();try{bar.setPointerCapture(ev.pointerId)}catch(e){}
+  var P=lastM.periods;
+  drag={bar:bar,x:x,M:lastM,mode:edgeOf(bar,ev.clientX),cx:ev.clientX,w:bar.parentNode.getBoundingClientRect().width,
+        s:x.s,e:x.e,min:P[0].s,max:P[P.length-1].e-1};
+  bar.classList.add("drag");bar.dataset.tip=thShort(x.s)+" – "+thShort(x.e);bar.removeAttribute("title");
+});
+$("paper").addEventListener("pointermove",function(ev){
+  if(!drag){var b=ev.target.closest&&ev.target.closest("i[data-i]");if(b)b.classList.toggle("edge",edgeOf(b,ev.clientX)!=="m");return}
+  var d=drag,M=d.M,G=4*M.periods.length,dx=(ev.clientX-d.cx)/d.w*G,s=d.x.s,e=d.x.e,len=e-s;
+  if(d.mode==="m"){s=Math.round(M.inv(M.pos(d.x.s)+dx));s=Math.max(d.min,Math.min(d.max-len,s));e=s+len;
+    if(dx>0&&M.pos(d.x.s)+dx>=G-0.001)s=d.max-len,e=d.max}
+  else if(d.mode==="l"){s=Math.max(d.min,Math.min(e,Math.round(M.inv(M.pos(d.x.s)+dx))))}
+  else{var xe=M.pos(d.x.e+1)+dx;e=xe>=G?d.max:Math.max(s,Math.min(d.max,Math.round(M.inv(xe))-1))}
+  if(s===d.s&&e===d.e)return;
+  d.s=s;d.e=e;var t=S.tasks[d.x.i];t.start=iso(s);t.end=iso(e);
+  var a=$("t"+d.x.i+"start"),b2=$("t"+d.x.i+"end");if(a)a.value=t.start;if(b2)b2.value=t.end;
+  var x0=M.pos(s),x1=M.pos(e+1);d.bar.style.left=(x0/G*100)+"%";d.bar.style.width=((x1-x0)/G*100)+"%";
+  d.bar.dataset.tip=thShort(s)+" – "+thShort(e)+" ("+(e-s+1)+" วัน)";
+});
+function endDrag(){if(!drag)return;drag=null;refresh()}
+$("paper").addEventListener("pointerup",endDrag);$("paper").addEventListener("pointercancel",endDrag);
+$("btnAdd").addEventListener("click",function(){
+  var prev=S.tasks[S.tasks.length-1],n=blankTask();if(prev)n.resp=prev.resp;
+  S.tasks.push(n);renderTasks();refresh();var el=$("t"+(S.tasks.length-1)+"name");if(el)el.focus()});
+$("btnExport").addEventListener("click",doExport);$("btnExport2").addEventListener("click",doExport);
+$("btnSample").addEventListener("click",function(){S=sample();rebuild();say("โหลดข้อมูลตัวอย่างแล้ว","ok")});
+$("btnReset").addEventListener("click",function(){$("resetConfirm").hidden=false;$("btnReset").hidden=true});
+$("resetNo").addEventListener("click",function(){$("resetConfirm").hidden=true;$("btnReset").hidden=false});
+$("resetYes").addEventListener("click",function(){var k=S;S=empty();S.dept=k.dept;S.division=k.division;S.bureau=k.bureau;S.sign=k.sign.map(function(g){return {name:g.name,pos:g.pos,date:""}});
+  $("resetConfirm").hidden=true;$("btnReset").hidden=false;rebuild();say("เริ่มแผนใหม่แล้ว (คงชื่อหน่วยงานและผู้ลงนามไว้)","ok")});
+window.__fm008={model:model,buildXlsx:buildXlsx};
+rebuild();
+})();
+</script>
